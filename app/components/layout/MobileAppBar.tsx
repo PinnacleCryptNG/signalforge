@@ -1,5 +1,5 @@
 import { useT } from "@agent-native/core/client/i18n";
-import { IconMenu2 } from "@tabler/icons-react";
+import { IconMenu2 } from "@/components/icons";
 import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";

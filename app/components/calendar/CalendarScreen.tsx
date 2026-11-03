@@ -10,7 +10,7 @@ import {
   IconCopy,
   IconHandFinger,
   IconX,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
 import { Link } from "react-router";

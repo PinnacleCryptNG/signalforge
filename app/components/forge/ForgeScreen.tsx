@@ -14,7 +14,7 @@ import {
   IconSparkles,
   IconTrash,
   IconX,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";

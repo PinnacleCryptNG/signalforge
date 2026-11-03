@@ -1,7 +1,7 @@
 import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
-import { IconArrowUpRight, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@tabler/icons-react";
+import { IconArrowUpRight, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";

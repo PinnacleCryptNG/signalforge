@@ -16,7 +16,7 @@ import {
   IconBrandDiscord,
   IconBrandGithub,
   IconUsers,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import { useState, type ReactNode } from "react";
 import { useNavigate } from "react-router";
 

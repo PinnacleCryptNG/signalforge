@@ -11,7 +11,7 @@ import {
   IconSparkles,
   IconVideo,
   IconWand,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import { toast } from "sonner";

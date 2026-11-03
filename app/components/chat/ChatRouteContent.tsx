@@ -68,7 +68,7 @@ import {
   IconAlertTriangle,
   IconLayoutSidebarRight,
   IconX,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import {
   memo,
   useCallback,
