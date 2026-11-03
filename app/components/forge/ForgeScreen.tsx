@@ -78,7 +78,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
 
   const agentResearch = () =>
     sendToAgentChat({
-      message: `Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, with a one-line reason per source in notes. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`,
+      message: `Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, each with a short note. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`,
       submit: true,
       newTab: true,
       openSidebar: true,
