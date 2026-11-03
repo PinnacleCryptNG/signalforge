@@ -10,7 +10,7 @@ import { requireOwner } from "../server/lib/owner.js";
 import { actorFromCaller, getNarrative, newId, nowIso } from "../server/lib/store.js";
 
 export default defineAction({
-  description: `Write platform drafts for a narrative from its brief (one draft per platform; saving a platform again replaces it). Use only the brief's angle, key points and approved sources; never add facts. Drafts the user edited are kept unless overwriteEdited is true (only when the user asks to replace them). Platform rules: ${PLATFORMS.map((p) => `${p}: ${PLATFORM_SPECS[p].guide}`).join(" ")}`,
+  description: `Write platform drafts for a narrative from its brief (one draft per platform; saving a platform again replaces it). Use only the brief's angle, key points and approved sources; never add facts. Write like a sharp human, not a model: plain words, specific names and facts from the approved sources, varied sentence length. Avoid AI tells: no 'delve', 'game-changer', 'revolutionize', 'unlock', 'in today's fast-paced world', 'Here's the thing', no emoji walls, no hashtag stuffing (Instagram: a few relevant tags at the end only). Drafts the user edited are kept unless overwriteEdited is true (only when the user asks to replace them). Platform rules: ${PLATFORMS.map((p) => `${p}: ${PLATFORM_SPECS[p].guide}`).join(" ")}`,
   schema: z.object({
     narrativeId: z.string(),
     drafts: z
