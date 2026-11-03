@@ -62,7 +62,7 @@ export function SignalField({ className }: { className?: string }) {
     }
 
     function chip(p: P, text: string, color: number[], alpha: number, align: "left" | "right" | "center") {
-      ctx.font = `600 ${vertical ? 9.5 : 11.5}px "Archivo Variable", system-ui, sans-serif`;
+      ctx.font = `600 ${vertical ? 9.5 : 11.5}px "DM Sans SF", system-ui, sans-serif`;
       const w = ctx.measureText(text).width + (vertical ? 12 : 20), h = vertical ? 18 : 24;
       const x = align === "left" ? p.x : align === "right" ? p.x - w : p.x - w / 2;
       const y = p.y - h / 2;
@@ -120,7 +120,7 @@ export function SignalField({ className }: { className?: string }) {
       ctx.restore(); ctx.setLineDash([]);
       ctx.fillStyle = "#140e0a"; ctx.beginPath(); ctx.arc(core.x, core.y, R * 0.62, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = rgba(GOLD, 0.9); ctx.lineWidth = 1.5; ctx.stroke();
-      ctx.font = `800 ${vertical ? 9 : 10.5}px "Martian Mono Variable", ui-monospace, monospace`;
+      ctx.font = `700 ${vertical ? 9.5 : 11}px "JetBrains Mono SF", ui-monospace, monospace`;
       ctx.fillStyle = rgba([255, 241, 214], 0.95); ctx.textAlign = "center"; ctx.textBaseline = "middle";
       ctx.fillText("FORGE", core.x, core.y + 0.5);
       // outgoing drafts: gold sparks

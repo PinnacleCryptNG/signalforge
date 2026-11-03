@@ -16,7 +16,7 @@ export default function NotFound() {
             <span key={i} style={{ animationDelay: `${d}s`, animationDuration: "2.4s" }} />
           ))}
         </div>
-        <p className="sf-mono mt-6 text-[11px] uppercase tracking-[0.3em] text-[var(--sf-steel)]">404 · signal lost</p>
+        <p className="sf-label mt-6 text-[12px] text-[var(--sf-steel)]">404 · signal lost</p>
         <h1 className="sf-display mt-3 text-4xl sm:text-5xl">Nothing rising here.</h1>
         <p className="mt-4 text-muted-foreground">This page went cold, or it never existed. Head back to the wire and catch the next story while it's still rising.</p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">

@@ -171,7 +171,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
       <div className="min-w-0 p-5 sm:p-6">
         {spec.title && (
           <label className="mb-3 block">
-            <span className="sf-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{spec.title}</span>
+            <span className="sf-label text-[11.5px] text-muted-foreground">{spec.title}</span>
             <textarea
               value={title}
               onChange={(e) => setTitle(e.target.value)}
@@ -192,7 +192,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
 
       <aside className="flex flex-col gap-4 border-t border-border bg-background/30 p-5 @2xl:border-l @2xl:border-t-0">
         <div>
-          <p className="sf-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">Length</p>
+          <p className="sf-label text-[11.5px] text-muted-foreground">Length</p>
           {draft.platform === "x" ? (
             <ul className="mt-2 space-y-1.5">
               {thread.map((p, i) => (
@@ -226,12 +226,12 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
           </button>
         </div>
         {approved && <ScheduleRow draft={draft} pending={scheduleIt.isPending} onSchedule={(iso) => scheduleIt.mutate({ id: draft.id, scheduledFor: iso } as never)} />}
-        <p className="sf-mono -mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+        <p className="sf-label -mt-2 text-[11.5px] text-muted-foreground">
           {draft.editedBy === "user" ? "Edited by you" : "Written by agent"} · {ago(draft.updatedAt)}
         </p>
 
         <div>
-          <p className="sf-mono flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground">
+          <p className="sf-label flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
             <IconWand className="size-3.5" /> Ask for a rewrite
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">

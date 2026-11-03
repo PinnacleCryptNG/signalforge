@@ -167,7 +167,7 @@ export function CalendarScreen() {
     <div className="@container mx-auto w-full max-w-7xl px-4 pb-24 pt-6 sm:px-8">
       <header className="sf-rise flex flex-wrap items-end gap-4">
         <div className="min-w-[min(100%,22rem)] flex-1">
-          <p className="sf-mono text-[11px] uppercase tracking-[0.28em] text-[hsl(var(--primary))]">Publishing calendar</p>
+          <p className="sf-label text-[12px] text-[hsl(var(--primary))]">Publishing calendar</p>
           <h1 className="sf-display mt-1 text-3xl font-bold @2xl:text-4xl">{label}</h1>
           <p className="mt-1 text-sm text-muted-foreground">You post, SignalForge keeps the plan. Approved drafts land here; export to any calendar app.</p>
         </div>
@@ -176,7 +176,7 @@ export function CalendarScreen() {
             <button type="button" aria-label="Previous week" onClick={() => setWeek((w) => addDays(w, -7))} className="px-2.5 py-2 text-muted-foreground transition hover:text-foreground">
               <IconChevronLeft className="size-4" />
             </button>
-            <button type="button" disabled={thisWeek} onClick={() => setWeek(startOfWeek(new Date()))} className="sf-mono px-2 text-[11px] uppercase tracking-wider text-muted-foreground transition hover:text-foreground disabled:opacity-40">
+            <button type="button" disabled={thisWeek} onClick={() => setWeek(startOfWeek(new Date()))} className="sf-label px-2 text-[12px] text-muted-foreground transition hover:text-foreground disabled:opacity-40">
               Today
             </button>
             <button type="button" aria-label="Next week" onClick={() => setWeek((w) => addDays(w, 7))} className="px-2.5 py-2 text-muted-foreground transition hover:text-foreground">
@@ -256,7 +256,7 @@ export function CalendarScreen() {
               className={`sf-rise relative flex min-h-24 flex-col rounded-2xl border p-3 transition @4xl:min-h-[420px] ${isToday ? "border-[hsl(var(--primary)/0.6)] bg-[hsl(var(--primary)/0.05)]" : "border-border bg-card/40"} ${past ? "opacity-55" : ""} ${canDrop ? "cursor-pointer ring-1 ring-[hsl(var(--primary)/0.5)] hover:bg-[hsl(var(--primary)/0.08)]" : ""}`}
             >
               <div className="flex items-baseline gap-2">
-                <span className="sf-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{day.toLocaleDateString([], { weekday: "short" })}</span>
+                <span className="sf-label text-[11.5px] text-muted-foreground">{day.toLocaleDateString([], { weekday: "short" })}</span>
                 <span className={`sf-display text-xl font-bold ${isToday ? "sf-molten-text" : ""}`}>{day.getDate()}</span>
                 {isToday && <span className="sf-pulse-dot ml-auto size-1.5 rounded-full bg-[hsl(var(--primary))]" />}
               </div>
@@ -277,7 +277,7 @@ export function CalendarScreen() {
                     />
                   </li>
                 ))}
-                {!items.length && !past && <li className="sf-mono hidden flex-1 items-center justify-center rounded-xl border border-dashed border-border/70 text-[10px] uppercase tracking-wider text-muted-foreground/60 @4xl:flex">open</li>}
+                {!items.length && !past && <li className="sf-label hidden flex-1 items-center justify-center rounded-xl border border-dashed border-border/70 text-[11.5px] text-muted-foreground/60 @4xl:flex">open</li>}
               </ul>
             </section>
           );
@@ -290,7 +290,7 @@ export function CalendarScreen() {
 function PlatformBadge({ d }: { d: Item }) {
   const { Icon, label } = SPEC[d.platform];
   return (
-    <span className="sf-mono flex items-center gap-1 text-[10px] uppercase tracking-wider text-muted-foreground">
+    <span className="sf-label flex items-center gap-1 text-[11.5px] text-muted-foreground">
       <Icon className="size-3.5 text-foreground" /> {label}
     </span>
   );

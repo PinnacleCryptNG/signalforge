@@ -91,8 +91,8 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
           <section className="sf-rise" key={n.id}>
             <div className="flex items-start gap-3">
               <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
-                <span className={`sf-mono rounded border px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${stage.className}`}>{stage.label}</span>
-                <span className="sf-mono min-w-0 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                <span className={`sf-label rounded border px-2 py-0.5 text-[11.5px] ${stage.className}`}>{stage.label}</span>
+                <span className="sf-label min-w-0 text-[12px] text-muted-foreground">
                   {sel.niche} · {sel.region} · momentum {n.momentum}
                 </span>
               </div>
@@ -111,7 +111,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
             {n.thesis && <p className="mt-3 max-w-3xl text-base leading-relaxed text-foreground/80">{n.thesis}</p>}
             {n.whyNow && (
               <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                <span className="sf-mono mr-1.5 text-[10px] uppercase tracking-widest text-[hsl(var(--primary))]">Why now</span>
+                <span className="sf-label mr-1.5 text-[11.5px] text-[hsl(var(--primary))]">Why now</span>
                 {n.whyNow}
               </p>
             )}
@@ -153,7 +153,7 @@ function EmptyForge() {
       </div>
       <h1 className="sf-display mt-5 text-3xl font-extrabold">Nothing on the anvil</h1>
       <p className="mt-2 text-muted-foreground">Pick a narrative on the Signals board and it lands here for research, source approval and a brief.</p>
-      <Link to="/signals" className="sf-molten sf-display mt-6 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold text-[#1a0e05]">
+      <Link to="/signals" className="sf-molten mt-6 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold text-[#1a0e05]">
         <IconRadar className="size-5" /> Go to Signals
       </Link>
     </div>
@@ -163,7 +163,7 @@ function EmptyForge() {
 function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string }) {
   return (
     <aside className="min-w-0 xl:sticky xl:top-6 xl:self-start">
-      <p className="sf-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">On the anvil · {queue.length}</p>
+      <p className="sf-label text-[12px] text-muted-foreground">On the anvil · {queue.length}</p>
       <nav className="mt-3 flex gap-2 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible">
         {queue.map((q) => {
           const active = q.id === activeId;
@@ -174,7 +174,7 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
               className={`sf-card block min-w-[220px] rounded-xl px-3.5 py-3 transition xl:min-w-0 ${active ? "sf-card-picked" : "opacity-80 hover:opacity-100"}`}
             >
               <p className="line-clamp-2 text-sm font-semibold leading-snug">{q.title}</p>
-              <div className="sf-mono mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 whitespace-nowrap text-[9.5px] uppercase text-muted-foreground">
+              <div className="sf-label mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 whitespace-nowrap text-[11px] text-muted-foreground">
                 <span className={q.approved ? "text-[hsl(var(--primary))]" : ""}>
                   {q.approved}/{q.sources} src
                 </span>
@@ -214,7 +214,7 @@ function Steps({ step }: { step: number }) {
             <div className="h-1 overflow-hidden rounded-full bg-muted">
               <div className={`sf-molten h-full transition-[width] duration-700 ${done ? "sf-heat" : ""}`} style={{ width: done ? "100%" : current ? "35%" : "0%" }} />
             </div>
-            <p className={`sf-mono mt-1.5 text-[9px] uppercase leading-snug @md:text-[10px] @md:tracking-wider ${done || current ? "text-foreground" : "text-muted-foreground/60"}`}>
+            <p className={`sf-label mt-1.5 text-[11px] leading-snug @md:text-[11.5px] ${done || current ? "text-foreground" : "text-muted-foreground/60"}`}>
               <span className={done || current ? "text-[hsl(var(--primary))]" : ""}>{String(i + 1).padStart(2, "0")}</span>
               <span className="block truncate @lg:ml-1.5 @lg:inline">
                 <span className="@md:hidden">{short}</span>
@@ -407,7 +407,7 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
     s.status === "approved" ? "border-[hsl(var(--primary)/0.6)]" : s.status === "rejected" ? "opacity-50" : "";
   return (
     <li className={`sf-card sf-rise flex flex-col rounded-xl p-4 ${tone}`} style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}>
-      <div className="sf-mono flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="sf-label flex items-center gap-2 text-[11.5px] text-muted-foreground">
         <span className="truncate font-bold text-foreground/70">{s.publisher}</span>
         {s.publishedAt && <span className="shrink-0 whitespace-nowrap">· {ago(s.publishedAt)}</span>}
         {s.addedBy === "user" && <span className="shrink-0 whitespace-nowrap text-[hsl(var(--primary))]">· added by you</span>}
@@ -424,10 +424,12 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
           {s.note ? `: ${s.note}` : ""}
         </p>
       )}
-      <div className="mt-auto flex flex-wrap items-center gap-1.5 pt-3">
-        <span className="sf-mono mr-auto whitespace-nowrap text-[10px] uppercase tracking-wider text-muted-foreground">
+      <div className="mt-auto pt-4">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-t border-border/60 pt-3">
+        <span className="sf-label mr-auto whitespace-nowrap text-[12px] text-muted-foreground first-letter:uppercase">
           {s.status === "pending" ? "Needs your call" : `${s.status} by ${s.decidedBy === "user" ? "you" : "agent"}`}
         </span>
+        <div className="ml-auto flex items-center gap-1.5">
         {s.status !== "pending" && (
           <button type="button" onClick={() => onDecide("pending")} className="rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-foreground">
             Undo
@@ -457,6 +459,8 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
         >
           <IconCheck className="size-3.5" /> {s.status === "approved" ? "Approved" : "Approve"}
         </button>
+        </div>
+      </div>
       </div>
     </li>
   );
@@ -523,7 +527,7 @@ function BriefPanel({
             <Field label="Tone" value={brief.tone} onSave={(v) => patch({ tone: v })} />
             <Field label="Call to action" value={brief.cta} onSave={(v) => patch({ cta: v })} />
           </div>
-          <p className="sf-mono mt-7 text-[10px] uppercase tracking-[0.2em] text-[hsl(var(--primary))]">Key points</p>
+          <p className="sf-label mt-7 text-[11.5px] text-[hsl(var(--primary))]">Key points</p>
           <ol className="mt-3 space-y-3">
             {brief.keyPoints.map((k, i) => (
               <KeyPointRow
@@ -547,7 +551,7 @@ function Field({ label, value, big, onSave }: { label: string; value: string; bi
   useEffect(() => setV(value), [value]);
   return (
     <label className="block">
-      <span className="sf-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground">{label}</span>
+      <span className="sf-label text-[11.5px] text-muted-foreground">{label}</span>
       <textarea
         value={v}
         onChange={(e) => setV(e.target.value)}

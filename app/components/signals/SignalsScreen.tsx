@@ -80,7 +80,7 @@ export function SignalsScreen() {
       <div className="sf-grid-lines pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-8">
         <section className="sf-rise">
-          <p className="sf-mono text-[11px] uppercase tracking-[0.28em] text-muted-foreground">
+          <p className="sf-label text-[12px] text-muted-foreground">
             <span className="sf-pulse-dot mr-2 inline-block size-1.5 rounded-full bg-[hsl(var(--primary))] align-middle" />
             Live from 6 public feeds
           </p>
@@ -115,7 +115,7 @@ export function SignalsScreen() {
               <button
                 type="submit"
                 disabled={scanning}
-                className="sf-molten sf-display flex h-14 flex-1 items-center justify-center gap-2 rounded-xl px-7 text-base font-bold text-[#1a0e05] shadow-[0_10px_40px_-12px_#ff5a1a] transition hover:brightness-110 disabled:opacity-70 sm:flex-none"
+                className="sf-molten flex h-14 flex-1 items-center justify-center gap-2 rounded-xl px-7 text-base font-bold text-[#1a0e05] shadow-[0_10px_40px_-12px_#ff5a1a] transition hover:brightness-110 disabled:opacity-70 sm:flex-none"
               >
                 <IconRadar className={`size-5 ${scanning ? "animate-spin" : ""}`} />
                 {scanning ? "Scanning…" : scan ? "Rescan" : "Scan"}
@@ -230,7 +230,7 @@ function Scanning({ niche }: { niche: string }) {
         ))}
       </div>
       <p className="sf-display text-xl font-semibold">Listening for “{niche}”</p>
-      <p className="sf-mono text-xs uppercase tracking-[0.2em] text-muted-foreground">
+      <p className="sf-label text-xs text-muted-foreground">
         {Object.values(FEED_META).map((f) => f.tag).join(" · ")}
       </p>
     </div>
@@ -262,7 +262,7 @@ function FeedStrip({ stats, createdAt }: { stats: Board["scan"] extends infer S 
         <span
           key={f.feed}
           title={f.ok ? `${FEED_META[f.feed].label}: ${f.count} signals` : `${FEED_META[f.feed].label} unavailable: ${f.error ?? "error"}`}
-          className={`sf-mono flex items-center gap-2 rounded-md border border-border bg-card/70 px-2.5 py-1.5 text-[11px] uppercase tracking-wider ${f.ok && f.count ? "" : "opacity-45"}`}
+          className={`sf-label flex items-center gap-2 rounded-md border border-border bg-card/70 px-2.5 py-1.5 text-[12px] ${f.ok && f.count ? "" : "opacity-45"}`}
         >
           <span className="size-1.5 rounded-full" style={{ background: f.ok ? FEED_META[f.feed].color : "#666" }} />
           {FEED_META[f.feed].tag}
@@ -296,14 +296,16 @@ function NarrativeCard({
 
   return (
     <article className={`sf-card sf-rise flex min-w-0 flex-col rounded-2xl p-5 ${picked ? "sf-card-picked" : ""}`} style={{ animationDelay: `${index * 70}ms` }}>
-      <div className="flex items-center gap-3">
-        <span className={`sf-mono rounded border px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${stage.className}`} title={stage.hint}>
+      <div className="flex items-center justify-between gap-3">
+        <span className={`sf-label rounded-full border px-2.5 py-0.5 text-xs ${stage.className}`} title={stage.hint}>
           {stage.label}
         </span>
-        <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-muted" title={`Momentum ${n.momentum}/100`}>
-          <div className="sf-molten sf-heat h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.max(6, n.momentum)}%` }} />
+        <div className="flex items-center gap-2" title={`Momentum ${n.momentum}/100`}>
+          <div className="h-1 w-16 overflow-hidden rounded-full bg-muted">
+            <div className="sf-molten sf-heat h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.max(6, n.momentum)}%` }} />
+          </div>
+          <span className="sf-mono text-xs font-semibold tabular-nums text-foreground">{n.momentum}</span>
         </div>
-        <span className="sf-mono text-xs tabular-nums text-muted-foreground">{n.momentum}</span>
       </div>
 
       {editing ? (
@@ -325,25 +327,25 @@ function NarrativeCard({
         </form>
       ) : (
         <button type="button" onClick={() => setEditing(true)} className="group mt-3 text-left" title="Rename">
-          <h3 className="sf-display text-xl font-bold leading-snug">
+          <h3 className="sf-display text-[21px] leading-[1.22]">
             {n.title}
             <IconPencil className="ml-2 inline size-3.5 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
           </h3>
         </button>
       )}
-      {n.thesis && <p className="mt-2 text-sm leading-relaxed text-foreground/80">{n.thesis}</p>}
+      {n.thesis && <p className="mt-2 text-[14.5px] leading-relaxed text-foreground/80">{n.thesis}</p>}
       {n.whyNow && (
-        <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-          <span className="sf-mono mr-1.5 text-[10px] uppercase tracking-widest text-[hsl(var(--primary))]">Why now</span>
+        <p className="mt-3 rounded-xl border border-[hsl(var(--primary)/0.16)] bg-[hsl(var(--primary)/0.06)] px-3 py-2.5 text-[13.5px] leading-relaxed text-foreground/80">
+          <span className="sf-label mr-1.5 text-[hsl(var(--primary))]">Why now</span>
           {n.whyNow}
         </p>
       )}
 
-      <ul className="mt-4 space-y-1.5">
+      <ul className="mt-4 space-y-2">
         {evidence.slice(0, 3).map((s) => (
           <li key={s.id}>
-            <a href={s.url} target="_blank" rel="noreferrer" className="group flex items-start gap-2 text-[13px] leading-snug text-foreground/75 hover:text-foreground">
-              <span className="sf-mono mt-0.5 shrink-0 text-[9px] font-bold tracking-wider" style={{ color: FEED_META[s.feed].color }}>
+            <a href={s.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 text-[13.5px] leading-snug text-foreground/75 hover:text-foreground">
+              <span className="sf-mono shrink-0 rounded-md border border-white/10 px-1.5 text-[10.5px] leading-[18px]" style={{ color: FEED_META[s.feed].color }}>
                 {FEED_META[s.feed].tag}
               </span>
               <span className="line-clamp-1">{s.title}</span>
@@ -353,28 +355,32 @@ function NarrativeCard({
         ))}
       </ul>
 
-      <div className="mt-auto flex flex-wrap items-center gap-2 pt-5">
-        <span className="sf-mono mr-auto text-[11px] text-muted-foreground">
+      <div className="mt-auto pt-5">
+      <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">
+        <span className="sf-mono mr-auto text-[11.5px] text-muted-foreground">
           {evidence.length} signals · {feeds.length} feed{feeds.length === 1 ? "" : "s"}
           {n.editedBy === "user" ? " · edited by you" : ""}
         </span>
+        <div className="ml-auto flex items-center gap-2">
         <button
           type="button"
           onClick={() => onPatch({ status: "dismissed" })}
-          className="flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs text-muted-foreground transition hover:bg-accent hover:text-foreground"
+          className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[13px] font-medium text-muted-foreground transition hover:border-foreground/25 hover:text-foreground"
         >
           <IconX className="size-3.5" /> Dismiss
         </button>
         <button
           type="button"
           onClick={onForge}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition ${
+          className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[13px] font-semibold transition ${
             picked ? "bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]" : "sf-molten text-[#1a0e05] hover:brightness-110"
           }`}
         >
           {picked ? <IconCheck className="size-3.5" /> : <IconFlame className="size-3.5" />}
           {picked ? "Open in Forge" : "Forge this"}
         </button>
+        </div>
+      </div>
       </div>
     </article>
   );
@@ -384,7 +390,7 @@ function SignalRow({ s, max }: { s: Signal; max: number }) {
   const meta = FEED_META[s.feed];
   return (
     <li className="group flex items-center gap-3 px-4 py-2.5 transition hover:bg-accent/50">
-      <span className="sf-mono w-10 shrink-0 text-[10px] font-bold tracking-wider" style={{ color: meta.color }}>
+      <span className="sf-mono w-11 shrink-0 text-[11px] font-semibold" style={{ color: meta.color }}>
         {meta.tag}
       </span>
       <a href={s.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1">
