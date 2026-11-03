@@ -1,6 +1,8 @@
 # SignalForge — AI Content Intelligence Studio
 
-SignalForge finds the stories starting to rise in your niche, checks them against sources you approve, and turns them into a ready-to-post campaign on a calendar. The agent does the research and writing. You decide which sources count, what gets published and when.
+![SignalForge: turn what's trending into a week of posts](public/og.jpg)
+
+**Turn what's trending into a week of posts.** SignalForge finds the stories starting to rise in your niche, checks them against sources you approve, and turns them into a ready-to-post campaign on a calendar. The agent does the research and writing. You decide which sources count, what gets published and when.
 
 **Live app:** https://signalforge-agent.vercel.app
 
@@ -40,6 +42,17 @@ Every capability is a single action that the UI, the agent sidebar and MCP clien
 - Only approved drafts can be scheduled. Same-platform clashes are refused.
 - All data is stored in SQL per owner, and every query is scoped to the signed-in account.
 
+## Design
+
+SignalForge has its own "heat map" identity: raw signals are cool steel blue, narratives being worked on are ember orange, finished drafts are molten gold, approvals are quench teal and rejections are slag red, all on anvil charcoal.
+
+- **Logo:** a cold signal line that heats as it rises and strikes a spark (`app/components/landing/Logo.tsx`, `public/favicon.svg`).
+- **Type:** Archivo (variable width) for display and body, Martian Mono for data labels.
+- **Icons:** a custom 24-grid SVG set in `app/components/icons/index.tsx`, also drawn over the framework's chat and settings icons (`scripts/gen-icons.tsx` regenerates `app/components/icons/tabler-swap.css` and `public/icons/sf/`).
+- **Landing:** a live canvas hero (`app/components/landing/SignalField.tsx`) where signals from six feeds stream into the forge and leave as five platform drafts. It respects reduced motion.
+- **Navigation:** a sidebar on desktop, a bottom tab bar (Signals, Forge, Calendar, Agent) on phones, and filter tabs on the wire, sources, drafts and calendar.
+- **Agent chat:** its own cooler steel panel, separate from the warm main view, with SignalForge prompts.
+
 ## Stack
 
 - Agent-Native (`@agent-native/core`), React Router, React 19, Tailwind
@@ -62,3 +75,7 @@ Checks:
 pnpm typecheck
 pnpm agent-native:doctor
 ```
+
+## License
+
+[MIT](LICENSE)

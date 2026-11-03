@@ -1,10 +1,1 @@
-<svg width="114" height="66" viewBox="0 0 114 66" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M24.5537 65.7695H0L15.0859 39.4619L37.708 0L60.4912 39.4619H39.6396L24.5537 65.7695Z" fill="white"/>
-<path d="M89.446 0H114L76.2921 65.7704H51.7383L89.446 0Z" fill="url(#paint0_linear_3201_29)"/>
-<defs>
-<linearGradient id="paint0_linear_3201_29" x1="101.702" y1="67.4791" x2="113.672" y2="-37.4275" gradientUnits="userSpaceOnUse">
-<stop stop-color="#00B5FF"/>
-<stop offset="1" stop-color="#48FFE4"/>
-</linearGradient>
-</defs>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><defs><linearGradient id="h" x1="4" y1="26" x2="27" y2="6" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7FA7C9"/><stop offset=".45" stop-color="#FF6A1F"/><stop offset="1" stop-color="#FFC05C"/></linearGradient><radialGradient id="g" cx="24" cy="8" r="9" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FF6A1F" stop-opacity=".55"/><stop offset="1" stop-color="#FF6A1F" stop-opacity="0"/></radialGradient></defs><rect width="32" height="32" rx="9" fill="#0E0C10"/><rect x=".5" y=".5" width="31" height="31" rx="8.5" fill="none" stroke="#fff" stroke-opacity=".08"/><circle cx="24" cy="8" r="9" fill="url(#g)"/><path d="M5 22.5c2-4.5 3.6-4.5 5 0s3.3 4.4 5.2-1.6C17 15 19.6 10.6 23 9" fill="none" stroke="url(#h)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M24 3.6c.4 2.3 1.6 3.5 3.9 3.9-2.3.4-3.5 1.6-3.9 3.9-.4-2.3-1.6-3.5-3.9-3.9 2.3-.4 3.5-1.6 3.9-3.9z" fill="#FFF1D6"/></svg>

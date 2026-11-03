@@ -1,20 +1,15 @@
 {
-  "name": "Signalforge",
-  "short_name": "Signalforge",
-  "description": "Workspace app for Signalforge.",
-  "start_url": "./home",
-  "background_color": "#111111",
-  "theme_color": "#18181B",
+  "name": "SignalForge",
+  "short_name": "SignalForge",
+  "description": "Turn what's trending into a week of posts. Spot rising stories, approve the sources, draft every platform, plan the calendar.",
+  "start_url": "./signals",
+  "display": "standalone",
+  "background_color": "#0B0A0D",
+  "theme_color": "#0B0A0D",
   "icons": [
-    {
-      "src": "icon-192.svg",
-      "sizes": "192x192",
-      "type": "image/svg+xml"
-    },
-    {
-      "src": "icon-512.svg",
-      "sizes": "512x512",
-      "type": "image/svg+xml"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml" }
   ]
 }
