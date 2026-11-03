@@ -30,7 +30,6 @@
 .lp-hero { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(24px, 4vw, 56px); align-items: center;
   max-width: 1320px; margin: 0 auto; padding: clamp(40px, 7vw, 96px) clamp(16px, 4vw, 48px) 56px; }
 .lp-h1 { margin: 0; font-family: var(--font-display); font-weight: 600; font-variation-settings: "SOFT" 50; font-size: clamp(42px, 6.4vw, 84px); line-height: 1.02; letter-spacing: -.022em; text-wrap: balance; }
-.lp-cold { color: var(--steel); }
 .lp-hot { background: linear-gradient(95deg, var(--gold), var(--ember) 55%, #ff3f2a); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lp-sub { margin: 22px 0 0; max-width: 34em; font-size: clamp(16px, 1.5vw, 19px); line-height: 1.55; color: #cfc6bc; }
 .lp-ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }

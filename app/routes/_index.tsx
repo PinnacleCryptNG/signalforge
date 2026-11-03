@@ -100,7 +100,7 @@ export default function Landing() {
         <section className="lp-hero">
           <div className="lp-hero-copy">
             <h1 className="lp-h1">
-              Turn what's <span className="lp-cold">trending</span> into a week of <span className="lp-hot">posts.</span>
+              Turn what's <span className="lp-hot">trending</span> into a week of <span className="lp-hot">posts.</span>
             </h1>
             <p className="lp-sub">
               SignalForge spots the stories rising in your niche, checks them against sources you approve, and drafts posts for every platform, ready on your calendar.
