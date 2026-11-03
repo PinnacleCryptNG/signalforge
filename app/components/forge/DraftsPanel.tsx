@@ -1,4 +1,4 @@
-import { sendToAgentChat } from "@agent-native/core/client/agent-chat";
+import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation } from "@agent-native/core/client/hooks";
 import {
   IconBrandInstagram,
@@ -46,12 +46,7 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
 
   const writeAll = () => {
     const list = PLATFORMS.filter((p) => picked.has(p.id)).map((p) => p.label);
-    sendToAgentChat({
-      message: `Write ${list.join(", ")} drafts for "${narrative.title}" (${narrative.id}) from its brief with save-drafts. Write each one natively for its platform, follow the brief's tone and CTA, and use only the brief's key points and approved sources.`,
-      submit: true,
-      newTab: true,
-      openSidebar: true,
-    });
+    askAgent(`Write ${list.join(", ")} drafts for "${narrative.title}" (${narrative.id}) from its brief with save-drafts. Write each one natively for its platform, follow the brief's tone and CTA, and use only the brief's key points and approved sources.`, { newTab: true });
   };
 
   return (
@@ -161,12 +156,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
     if (Object.keys(patch).length) update.mutate({ id: draft.id, ...patch } as never);
   };
   const rewrite = (how: string) =>
-    sendToAgentChat({
-      message: `Rewrite my ${spec.label} draft (${draft.id}) for "${narrativeTitle}": ${how}. Use update-draft, keep to the brief's facts and the ${spec.limit}-character limit.`,
-      submit: true,
-      newTab: true,
-      openSidebar: true,
-    });
+    askAgent(`Rewrite my ${spec.label} draft (${draft.id}) for "${narrativeTitle}": ${how}. Use update-draft, keep to the brief's facts and the ${spec.limit}-character limit.`, { newTab: true });
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(spec.title && title ? `${title}\n\n${body}` : body);

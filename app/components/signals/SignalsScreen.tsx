@@ -1,4 +1,4 @@
-import { sendToAgentChat } from "@agent-native/core/client/agent-chat";
+import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
 import { IconArrowUpRight, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@tabler/icons-react";
@@ -70,11 +70,7 @@ export function SignalsScreen() {
 
   const sharpen = () =>
     scan &&
-    sendToAgentChat({
-      message: `Sharpen the narratives for my "${scan.niche}" scan (${scan.id}). Read the board with get-signals-board, drop off-topic noise, and save 4-6 specific narratives with save-narratives, each backed by real signal ids. If a narrative sharpens one I picked, list the picked id in replaces.`,
-      submit: true,
-      openSidebar: true,
-    });
+    askAgent(`Sharpen the narratives for my "${scan.niche}" scan (${scan.id}). Read the board with get-signals-board, drop off-topic noise, and save 4-6 specific narratives with save-narratives, each backed by real signal ids. If a narrative sharpens one I picked, list the picked id in replaces.`);
 
   const wire = (board?.signals ?? []).filter((s) => feedFilter === "all" || s.feed === feedFilter);
 

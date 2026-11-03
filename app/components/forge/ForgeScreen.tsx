@@ -1,4 +1,4 @@
-import { sendToAgentChat } from "@agent-native/core/client/agent-chat";
+import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
 import {
@@ -77,19 +77,9 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
   const step = sel.drafts.length ? 4 : sel.brief ? 3 : approved.length ? 2 : sel.sources.length ? 1 : 0;
 
   const agentResearch = () =>
-    sendToAgentChat({
-      message: `Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, each with a short note. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`,
-      submit: true,
-      newTab: true,
-      openSidebar: true,
-    });
+    askAgent(`Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, each with a short note. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`, { newTab: true });
   const agentBrief = () =>
-    sendToAgentChat({
-      message: `Write the brief for "${n.title}" (${n.id}) with save-brief, using only my approved sources (read them with get-forge). Every key point must cite the approved source ids it relies on.`,
-      submit: true,
-      newTab: true,
-      openSidebar: true,
-    });
+    askAgent(`Write the brief for "${n.title}" (${n.id}) with save-brief, using only my approved sources (read them with get-forge). Every key point must cite the approved source ids it relies on.`, { newTab: true });
 
   return (
     <Shell>
