@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { SignalForgeMark, SignalForgeWordmark } from "@/components/landing/Logo";
 
 interface MobileAppBarProps {
   onOpenNavigation: () => void;
@@ -28,7 +29,7 @@ export function MobileAppBar({
     <header
       data-mobile-app-bar=""
       className={cn(
-        "flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background px-2",
+        "flex h-12 shrink-0 items-center gap-2 border-b border-border bg-background/85 px-2 backdrop-blur-xl",
         className,
       )}
     >
@@ -43,7 +44,12 @@ export function MobileAppBar({
         <IconMenu2 className="size-4" />
       </Button>
       <div className="flex min-w-0 flex-1 items-center truncate text-sm font-medium">
-        {title}
+        {title ?? (
+          <span className="flex items-center gap-2">
+            <SignalForgeMark size={24} />
+            <SignalForgeWordmark className="text-[15px]" />
+          </span>
+        )}
       </div>
       {actions ? (
         <div className="flex shrink-0 items-center gap-1">{actions}</div>

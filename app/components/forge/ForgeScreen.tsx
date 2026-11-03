@@ -1,3 +1,4 @@
+import { FilterTabs } from "@/components/forge/FilterTabs";
 import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
@@ -311,18 +312,17 @@ function SourcesPanel({
 
       {sources.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center gap-1.5">
-          {(["all", "pending", "approved", "rejected"] as const).map((f) => (
-            <button
-              key={f}
-              type="button"
-              onClick={() => setFilter(f)}
-              className={`sf-mono rounded-md border px-2.5 py-1 text-[11px] uppercase tracking-wider transition ${
-                filter === f ? "border-[hsl(var(--primary))] text-foreground" : "border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {f} {counts[f]}
-            </button>
-          ))}
+          <FilterTabs
+            label="Filter sources by status"
+            value={filter}
+            onChange={setFilter}
+            tabs={[
+              { id: "all" as const, label: "All", count: counts.all },
+              { id: "pending" as const, label: "Pending", count: counts.pending },
+              { id: "approved" as const, label: "Approved", count: counts.approved, Icon: IconCheck },
+              { id: "rejected" as const, label: "Rejected", count: counts.rejected, Icon: IconX },
+            ]}
+          />
           {(recommended.length > 0 || flagged.length > 0) && <span className="ml-auto" />}
           {flagged.length > 0 && (
             <button

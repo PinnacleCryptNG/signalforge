@@ -24,6 +24,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { APP_TITLE } from "@/lib/app-config";
+import { MobileTabBar } from "@/components/layout/MobileTabBar";
 import { HOME_PATH, isChatPathname } from "@/lib/chat-paths";
 import { TAB_ID } from "@/lib/tab-id";
 
@@ -166,6 +167,7 @@ function LayoutShell({ children }: LayoutProps) {
       <main className="agent-native-app-main min-w-0 flex-1 overflow-y-auto overscroll-contain">
         {children}
       </main>
+      {!isChatRoute && !settingsOwnsChrome && <MobileTabBar className="md:hidden" />}
     </div>
   );
 

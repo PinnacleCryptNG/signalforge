@@ -1,3 +1,6 @@
+import type { Platform } from "@/components/forge/types";
+import { FilterTabs } from "@/components/forge/FilterTabs";
+import { PLATFORMS } from "@/components/forge/DraftsPanel";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
 import {
@@ -78,6 +81,7 @@ export function CalendarScreen() {
   const [overlay, setOverlay] = useState<Record<string, Partial<Item>>>({});
   const [held, setHeld] = useState<string | null>(null);
   const [editing, setEditing] = useState<string | null>(null);
+  const [platformFilter, setPlatformFilter] = useState<Platform | "all">("all");
   useEffect(() => setOverlay({}), [data]);
 
   const all = useMemo(() => {
@@ -224,9 +228,21 @@ export function CalendarScreen() {
         )}
       </section>
 
-      <div className="mt-5 grid gap-3 @4xl:grid-cols-7">
+      <div className="mt-6">
+        <FilterTabs
+          label="Filter the calendar by platform"
+          value={platformFilter}
+          onChange={setPlatformFilter}
+          tabs={[
+            { id: "all" as const, label: "All", count: scheduled.length },
+            ...PLATFORMS.map((p) => ({ id: p.id, label: p.label, Icon: p.Icon, count: scheduled.filter((d) => d.platform === p.id).length })),
+          ]}
+        />
+      </div>
+
+      <div className="mt-4 grid gap-3 @4xl:grid-cols-7">
         {days.map((day, i) => {
-          const items = scheduled.filter((d) => sameDay(new Date(d.scheduledFor!), day));
+          const items = scheduled.filter((d) => sameDay(new Date(d.scheduledFor!), day) && (platformFilter === "all" || d.platform === platformFilter));
           const past = addDays(day, 1).getTime() <= Date.now();
           const isToday = sameDay(day, today);
           const canDrop = !!heldItem && !past;

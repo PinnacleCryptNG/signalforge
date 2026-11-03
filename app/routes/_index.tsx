@@ -6,7 +6,7 @@ import {
   IconFlame,
   IconRadar,
   IconShieldCheck,
-} from "@tabler/icons-react";
+} from "@/components/icons";
 import { useEffect, useRef } from "react";
 
 import { SignalForgeMark } from "@/components/landing/Logo";

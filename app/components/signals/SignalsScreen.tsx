@@ -1,3 +1,4 @@
+import { FilterTabs } from "@/components/forge/FilterTabs";
 import { askAgent } from "@/lib/ask-agent";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
@@ -197,20 +198,15 @@ export function SignalsScreen() {
                   <h2 className="sf-display text-2xl font-bold">The wire</h2>
                   <p className="text-sm text-muted-foreground">Every raw signal, hottest first.</p>
                 </div>
-                <div className="flex flex-wrap gap-1.5">
-                  {(["all", ...scan.feedStats.filter((f) => f.count > 0).map((f) => f.feed)] as const).map((f) => (
-                    <button
-                      key={f}
-                      type="button"
-                      onClick={() => setFeedFilter(f)}
-                      className={`sf-mono rounded-md border px-2.5 py-1 text-[11px] uppercase tracking-wider transition ${
-                        feedFilter === f ? "border-[hsl(var(--primary))] text-foreground" : "border-border text-muted-foreground hover:text-foreground"
-                      }`}
-                    >
-                      {f === "all" ? "All" : FEED_META[f].tag}
-                    </button>
-                  ))}
-                </div>
+                <FilterTabs
+                  label="Filter the wire by feed"
+                  value={feedFilter}
+                  onChange={setFeedFilter}
+                  tabs={[
+                    { id: "all" as const, label: "All", count: board.signals.length },
+                    ...scan.feedStats.filter((f) => f.count > 0).map((f) => ({ id: f.feed, label: FEED_META[f.feed].tag, count: f.count })),
+                  ]}
+                />
               </div>
               <ol className="mt-4 divide-y divide-border overflow-hidden rounded-xl border border-border bg-card/60">
                 {wire.slice(0, 60).map((s) => (
