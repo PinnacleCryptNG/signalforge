@@ -53,7 +53,7 @@
 .lp-src em.ok { color: #9be89b; border: 1px solid rgba(125,216,125,.5); }
 .lp-src em.no { color: #ff8a5c; border: 1px solid rgba(255,90,40,.5); }
 .lp-out { margin-top: 12px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
-.lp-out span { font-size: 10px; text-align: center; padding: 8px 0; border-radius: 9px; border: 1px solid rgba(255,190,140,.16); color: rgba(246,239,233,.85); opacity: 0; transform: translateY(8px); animation: lp-pop 12s infinite; animation-delay: calc(var(--i) * .18s); }
+.lp-out span { font-size: 10px; text-align: center; padding: 8px 0; border-radius: 9px; border: 1px solid rgba(255,190,140,.16); color: rgba(246,239,233,.85); opacity: .22; transform: translateY(8px); animation: lp-pop 12s infinite; animation-delay: calc(var(--i) * .18s); }
 .lp-cal { margin-top: 10px; display: flex; align-items: center; gap: 10px; font-size: 12px; color: rgba(246,239,233,.7); opacity: 0; animation: lp-cal 12s infinite; }
 .lp-cal b { color: #1a0e05; padding: 4px 8px; border-radius: 7px; font-size: 10.5px; }
 
@@ -87,7 +87,7 @@
 @keyframes lp-heat { 0%, 8% { border-color: rgba(255,190,140,.16); box-shadow: none; } 20%, 92% { border-color: rgba(255,122,26,.6); box-shadow: 0 0 40px -14px rgba(255,90,20,.7); } 100% { border-color: rgba(255,190,140,.16); } }
 @keyframes lp-fill { 0%, 6% { width: 4%; } 26%, 92% { width: 88%; } 100% { width: 4%; } }
 @keyframes lp-stamp { 0%, 28% { opacity: 0; transform: scale(1.8) rotate(-8deg); } 32%, 92% { opacity: 1; transform: scale(1) rotate(-4deg); } 100% { opacity: 0; } }
-@keyframes lp-pop { 0%, 52% { opacity: 0; transform: translateY(8px); } 56%, 92% { opacity: 1; transform: none; border-color: rgba(255,122,26,.5); } 100% { opacity: 0; } }
+@keyframes lp-pop { 0%, 52% { opacity: .22; transform: translateY(8px); } 56%, 92% { opacity: 1; transform: none; border-color: rgba(255,122,26,.5); } 100% { opacity: .22; } }
 @keyframes lp-cal { 0%, 70% { opacity: 0; transform: translateX(-8px); } 74%, 92% { opacity: 1; transform: none; } 100% { opacity: 0; } }
 
 @media (max-width: 960px) {
