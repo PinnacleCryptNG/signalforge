@@ -28,7 +28,7 @@ import "@/components/landing/landing.css";
 const TITLE = "SignalForge · Turn what's trending into a week of posts";
 const DESC =
   "Content takes hours you don't have. SignalForge finds what's rising in your niche, checks the facts with sources you approve, and drafts human-sounding posts for X, LinkedIn, Instagram, email and video, planned on your calendar.";
-const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=2";
+const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=3";
 
 export function meta() {
   return [
