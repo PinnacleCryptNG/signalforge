@@ -45,7 +45,7 @@ export default defineAction({
         scheduledFor = at.toISOString();
       }
     }
-    const published = args.published ?? d.status === "published";
+    const published = args.published ?? (args.scheduledFor === null ? false : d.status === "published");
     if (published && !scheduledFor) scheduledFor = nowIso();
     const status = published ? "published" : scheduledFor ? "scheduled" : "approved";
 

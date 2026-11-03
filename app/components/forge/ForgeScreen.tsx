@@ -78,7 +78,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
 
   const agentResearch = () =>
     sendToAgentChat({
-      message: `Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, each with a short note. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`,
+      message: `Research the narrative "${n.title}" (${n.id}). Run research-narrative once, judge every pending source from the excerpts it returns, then record your recommendations in two review-source calls: one with all the ids to approve, one with all the ids to reject, with a one-line reason per source in notes. Only search for more sources if fewer than 3 look relevant. Be quick, and don't write the brief yet.`,
       submit: true,
       newTab: true,
       openSidebar: true,
@@ -433,6 +433,7 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
         <button
           type="button"
           aria-label="Reject source"
+          aria-pressed={s.status === "rejected"}
           onClick={() => onDecide("reject")}
           className={`flex items-center gap-1 rounded-md px-2.5 py-1.5 text-xs transition ${s.status === "rejected" ? "bg-muted text-foreground" : "text-muted-foreground hover:bg-accent hover:text-foreground"}`}
         >
@@ -441,6 +442,7 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
         <button
           type="button"
           aria-label="Approve source"
+          aria-pressed={s.status === "approved"}
           onClick={() => onDecide("approve")}
           className={`flex items-center gap-1 rounded-md px-3 py-1.5 text-xs font-bold transition ${
             s.status === "approved"

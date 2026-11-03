@@ -181,7 +181,13 @@ export function SignalsScreen() {
                     evidence={n.signalIds.map((id) => byId.get(id)).filter((s): s is Signal => !!s)}
                     onPatch={(patch) => update.mutate({ id: n.id, ...patch } as never)}
                     onForge={() => {
-                      if (n.status !== "picked") update.mutate({ id: n.id, status: "picked" } as never);
+                      if (n.status !== "picked")
+                        update.mutate({ id: n.id, status: "picked" } as never, {
+                          onSuccess: (res: unknown) => {
+                            const picked = (res as { id?: string } | undefined)?.id;
+                            if (picked && picked !== n.id) navigate(`/forge/${picked}`, { replace: true });
+                          },
+                        });
                       navigate(`/forge/${n.id}`);
                     }}
                   />

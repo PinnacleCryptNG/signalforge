@@ -109,7 +109,7 @@ export function clusterSignals(niche: string, rows: RawSignal[], now = Date.now(
     const top = rows[members[0]!]!;
     out.push({
       title: headline(top.title, term),
-      thesis: `${members.length} signals across ${feeds.size} ${feeds.size === 1 ? "feed" : "feeds"} point at ${term}${extra.length ? `, often alongside ${extra.join(", ")}` : ""}.`,
+      thesis: `${members.length} signals from ${listFeeds(feeds)} are clustering around “${term}”${extra.length ? `, with talk of ${extra.join(", ")}` : ""}.`,
       whyNow: `Top signal: "${top.title}"${top.publisher ? ` (${top.publisher})` : ""}.`,
       keywords: [term, ...extra],
       members,
@@ -120,6 +120,20 @@ export function clusterSignals(niche: string, rows: RawSignal[], now = Date.now(
 
   const max = Math.max(1, ...out.map((n) => n.momentum));
   return out.map((n) => ({ ...n, momentum: Math.max(8, Math.round((n.momentum / max) * 100)) }));
+}
+
+const FEED_NAMES: Record<string, string> = {
+  hackernews: "Hacker News",
+  reddit: "Reddit",
+  news: "Google News",
+  trends: "Google Trends",
+  wikipedia: "Wikipedia",
+  bluesky: "Bluesky",
+};
+
+function listFeeds(feeds: Set<string>) {
+  const names = [...feeds].map((f) => FEED_NAMES[f] ?? f);
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}` : names[0]!;
 }
 
 function stageFor(count: number, fresh: number, reach: number, feedCount: number): Stage {

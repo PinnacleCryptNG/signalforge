@@ -1,5 +1,5 @@
 import { defineAction } from "@agent-native/core/action";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "../server/db/index.js";
@@ -8,7 +8,7 @@ import { requireOwner } from "../server/lib/owner.js";
 import { actorFromCaller, getNarrative, nowIso } from "../server/lib/store.js";
 
 export default defineAction({
-  description: "Edit a narrative (title, thesis, why now, stage) or set its status: picked (work on it), dismissed (hide), new.",
+  description: "Edit a narrative (title, thesis, why now, stage) or set its status: picked (work on it), dismissed (hide), new. Picking a story that is already on the anvil under the same title returns the existing narrative instead of a duplicate; use the returned id.",
   schema: z.object({
     id: z.string(),
     title: z.string().min(3).max(90).optional(),
@@ -20,7 +20,21 @@ export default defineAction({
   http: { method: "POST" },
   run: async ({ id, ...patch }, ctx) => {
     const owner = requireOwner(ctx);
-    await getNarrative(owner, id);
+    const current = await getNarrative(owner, id);
+    if (patch.status === "picked") {
+      const [already] = await getDb()
+        .select({ id: narratives.id })
+        .from(narratives)
+        .where(
+          and(
+            eq(narratives.ownerEmail, owner),
+            eq(narratives.status, "picked"),
+            ne(narratives.id, id),
+            sql`lower(${narratives.title}) = ${current.title.toLowerCase()}`
+          )
+        );
+      if (already) return getNarrative(owner, already.id);
+    }
     const textEdit = patch.title !== undefined || patch.thesis !== undefined || patch.whyNow !== undefined;
     await getDb()
       .update(narratives)
