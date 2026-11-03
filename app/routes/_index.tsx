@@ -16,6 +16,8 @@ const TITLE = "SignalForge · Catch the story while it's still rising";
 const DESC =
   "SignalForge finds the narratives heating up in your niche, researches them with sources you approve, and forges a campaign for every platform onto your calendar.";
 
+const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=1";
+
 export function meta() {
   return [
     { title: TITLE },
@@ -23,7 +25,14 @@ export function meta() {
     { property: "og:type", content: "website" },
     { property: "og:title", content: TITLE },
     { property: "og:description", content: DESC },
-    { name: "twitter:card", content: "summary" },
+    { property: "og:image", content: OG_IMAGE },
+    { property: "og:image:secure_url", content: OG_IMAGE },
+    { property: "og:image:type", content: "image/jpeg" },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    { property: "og:image:alt", content: "SignalForge: catch the story while it's still rising" },
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:image", content: OG_IMAGE },
     { name: "twitter:title", content: TITLE },
     { name: "twitter:description", content: DESC },
   ];
