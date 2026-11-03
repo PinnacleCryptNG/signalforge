@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { getDb } from "../server/db/index.js";
 import { drafts } from "../server/db/schema.js";
-import { limitProblem } from "../server/lib/drafts.js";
+import { fitXThread, limitProblem } from "../server/lib/drafts.js";
 import { requireOwner } from "../server/lib/owner.js";
 import { actorFromCaller, nowIso } from "../server/lib/store.js";
 
@@ -26,7 +26,8 @@ export default defineAction({
     if (!row) fail(`Draft ${id} not found.`, { errorCode: "not_found", statusCode: 404 });
     if (actor === "agent" && patch.status === "approved") fail("Only the user can approve a draft.", { errorCode: "user_only", statusCode: 403 });
 
-    const body = patch.body?.trim() ?? row!.body;
+    const typed = patch.body?.trim() ?? row!.body;
+    const body = actor === "agent" && row!.platform === "x" ? fitXThread(typed) : typed;
     const problem = limitProblem(row!.platform, body);
     if (problem && (actor === "agent" || patch.status === "approved")) fail(`${problem} Shorten it first.`, { errorCode: "over_limit", statusCode: 400 });
 

@@ -20,10 +20,42 @@ export function limitProblem(platform: Platform, body: string): string | null {
     const posts = body.split(THREAD_SPLIT).map((p) => p.trim()).filter(Boolean);
     if (posts.length > 6) return "An X thread can have at most 6 posts.";
     const long = posts.findIndex((p) => [...p].length > spec.limit);
-    return long >= 0 ? `X post ${long + 1} is ${[...posts[long]!].length} characters; the limit is ${spec.limit}.` : null;
+    if (long < 0) return null;
+    const n = [...posts[long]!].length;
+    return `X post ${long + 1} is ${n} characters, ${n - spec.limit} over the ${spec.limit} limit. Cut at least ${n - spec.limit} characters or split it into more posts.`;
   }
   const n = [...body].length;
-  return n > spec.limit ? `${spec.label} is ${n} characters; the limit is ${spec.limit}.` : null;
+  return n > spec.limit ? `${spec.label} is ${n} characters, ${n - spec.limit} over the ${spec.limit} limit. Cut at least ${n - spec.limit} characters.` : null;
+}
+
+const chars = (s: string) => [...s].length;
+
+/** Splits over-long X posts into a thread at paragraph, then sentence, breaks without changing any words. Returns the body unchanged when that can't fit. */
+export function fitXThread(body: string): string {
+  const limit = PLATFORM_SPECS.x.limit;
+  const posts = body.split(THREAD_SPLIT).map((p) => p.trim()).filter(Boolean);
+  if (posts.every((p) => chars(p) <= limit)) return body;
+  const out: string[] = [];
+  for (const post of posts) {
+    if (chars(post) <= limit) {
+      out.push(post);
+      continue;
+    }
+    const pieces = post.split(/\n\s*\n/).flatMap((para, i) => {
+      const parts = chars(para) <= limit ? [para.trim()] : (para.match(/[^.!?…]+(?:[.!?…]+["'”’)]*|$)/g) ?? [para]).map((s) => s.trim()).filter(Boolean);
+      return parts.map((text, j) => ({ text, sep: j === 0 && i > 0 ? "\n\n" : " " }));
+    });
+    let cur = "";
+    for (const { text, sep } of pieces) {
+      if (chars(text) > limit) return body;
+      if (cur && chars(cur + sep + text) > limit) {
+        out.push(cur);
+        cur = text;
+      } else cur = cur ? cur + sep + text : text;
+    }
+    if (cur) out.push(cur);
+  }
+  return out.length <= 6 ? out.join("\n---\n") : body;
 }
 
 export async function listDrafts(owner: string, narrativeId: string) {

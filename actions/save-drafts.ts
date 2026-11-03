@@ -4,7 +4,7 @@ import { z } from "zod";
 
 import { getDb } from "../server/db/index.js";
 import { drafts, PLATFORMS } from "../server/db/schema.js";
-import { limitProblem, listDrafts, PLATFORM_SPECS } from "../server/lib/drafts.js";
+import { fitXThread, limitProblem, listDrafts, PLATFORM_SPECS } from "../server/lib/drafts.js";
 import { getBrief } from "../server/lib/forge.js";
 import { requireOwner } from "../server/lib/owner.js";
 import { actorFromCaller, getNarrative, newId, nowIso } from "../server/lib/store.js";
@@ -33,7 +33,7 @@ export default defineAction({
     const brief = await getBrief(owner, args.narrativeId);
     if (!brief) fail("Write the brief before drafting. Drafts follow the brief.", { errorCode: "no_brief", statusCode: 409 });
 
-    const checked = args.drafts.map((d) => ({
+    const checked = args.drafts.map((raw) => ({ ...raw, body: raw.platform === "x" ? fitXThread(raw.body) : raw.body })).map((d) => ({
       d,
       problem: limitProblem(d.platform, d.body) ?? (PLATFORM_SPECS[d.platform].needsTitle && !d.title?.trim() ? `${PLATFORM_SPECS[d.platform].label} needs a title.` : null),
     }));
