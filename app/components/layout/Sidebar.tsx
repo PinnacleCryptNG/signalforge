@@ -15,7 +15,7 @@ import { openCommandMenu } from "@agent-native/toolkit/app/shared";
 import { AgentNativeIcon } from "@agent-native/toolkit/app/shared/AgentNativeIcon";
 import {
   IconEdit,
-  IconHome,
+  IconRadar,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
   IconLoader2,
@@ -31,7 +31,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { APP_TITLE } from "@/lib/app-config";
-import { chatThreadPath, HOME_PATH, threadIdFromPath } from "@/lib/chat-paths";
+import { chatThreadPath, threadIdFromPath } from "@/lib/chat-paths";
 import { cn } from "@/lib/utils";
 
 const CHAT_STORAGE_KEY = "chat";
@@ -117,40 +117,41 @@ function persistActiveThreadId(threadId: string) {
   } catch {}
 }
 
+const NAV = [{ to: "/signals", label: "Signals", Icon: IconRadar }] as const;
+
 function HomeNavLink({ collapsed }: { collapsed: boolean }) {
-  const t = useT();
   const location = useLocation();
-  const active = location.pathname === HOME_PATH;
-  const link = (
-    <Link
-      to={HOME_PATH}
-      aria-current={active ? "page" : undefined}
-      aria-label={collapsed ? t("navigation.home") : undefined}
-      className={cn(
-        "flex items-center text-sidebar-accent-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
-        active && "bg-sidebar-accent",
-        collapsed
-          ? "size-8 justify-center rounded-md"
-          : "h-8 w-full gap-3 rounded-lg px-3 text-sm font-medium",
-      )}
-    >
-      <IconHome className="size-4 shrink-0" strokeWidth={1.8} />
-      <span className={collapsed ? "sr-only" : "truncate"}>
-        {t("navigation.home")}
-      </span>
-    </Link>
+  return (
+    <div className={collapsed ? "flex flex-col items-center gap-1" : "flex flex-col gap-0.5 px-2"}>
+      {NAV.map(({ to, label, Icon }) => {
+        const active = location.pathname.startsWith(to);
+        const link = (
+          <Link
+            key={to}
+            to={to}
+            aria-current={active ? "page" : undefined}
+            aria-label={collapsed ? label : undefined}
+            className={cn(
+              "flex items-center text-sidebar-accent-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
+              active && "bg-sidebar-accent text-[hsl(var(--primary))]",
+              collapsed ? "size-8 justify-center rounded-md" : "h-8 w-full gap-3 rounded-lg px-3 text-sm font-medium",
+            )}
+          >
+            <Icon className="size-4 shrink-0" strokeWidth={1.8} />
+            <span className={collapsed ? "sr-only" : "truncate"}>{label}</span>
+          </Link>
+        );
+        return collapsed ? (
+          <Tooltip key={to}>
+            <TooltipTrigger asChild>{link}</TooltipTrigger>
+            <TooltipContent side="right">{label}</TooltipContent>
+          </Tooltip>
+        ) : (
+          link
+        );
+      })}
+    </div>
   );
-
-  if (collapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{link}</TooltipTrigger>
-        <TooltipContent side="right">{t("navigation.home")}</TooltipContent>
-      </Tooltip>
-    );
-  }
-
-  return <div className="px-2">{link}</div>;
 }
 
 function ChatThreadsSection({ collapsed }: { collapsed: boolean }) {

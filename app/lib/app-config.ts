@@ -1,5 +1,5 @@
 const rawAppName = "signalforge";
-const rawAppTitle = "Signalforge";
+const rawAppTitle = "SignalForge";
 
 const APP_NAME_PLACEHOLDER = "{" + "{APP_NAME}}";
 const APP_TITLE_PLACEHOLDER = "{" + "{APP_TITLE}}";
