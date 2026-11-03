@@ -10,7 +10,10 @@ export default defineAction({
     "Add one source link to a narrative. The page is read for its title and an excerpt. Links the user adds are approved; links the agent adds stay pending until the user approves them. Only add real URLs you have seen.",
   schema: z.object({
     narrativeId: z.string(),
-    url: z.string().url(),
+    url: z
+      .string()
+      .url()
+      .refine((u) => /^https?:\/\//i.test(u), "Only http(s) links can be sources"),
     title: z.string().max(300).optional(),
     note: z.string().max(300).optional().describe("Why this source matters"),
   }),

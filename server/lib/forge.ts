@@ -1,4 +1,5 @@
 import { fail } from "@agent-native/core/action";
+import { isBlockedExtensionUrlWithDns } from "@agent-native/core/extensions/url-safety";
 import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { getDb } from "../db/index.js";
@@ -155,6 +156,8 @@ export async function researchNarrative(owner: string, narrativeId: string, acto
 
 export async function addSource(owner: string, narrativeId: string, actor: Actor, input: { url: string; title?: string | undefined; note?: string | undefined }) {
   if (!isHttpUrl(input.url)) fail("Use a full http(s) link.", { errorCode: "bad_url", statusCode: 400 });
+  if (await isBlockedExtensionUrlWithDns(input.url))
+    fail("That link points to a private or local address, so it can't be a source.", { errorCode: "blocked_url", statusCode: 400 });
   await getNarrative(owner, narrativeId);
   const existing = await listSources(owner, narrativeId);
   const dupe = existing.find((s) => s.url === input.url);
