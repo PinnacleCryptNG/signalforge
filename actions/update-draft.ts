@@ -10,12 +10,12 @@ import { actorFromCaller, nowIso } from "../server/lib/store.js";
 
 export default defineAction({
   description:
-    "Edit one draft (title, body) or, for the user only, approve it. Use this to rewrite a draft when the user asks (punchier, shorter, another tone). Agent rewrites must stay within the platform limit, keep to the brief's facts, and send the draft back to status draft for the user to re-approve.",
+    "Edit one draft (title, body) or, for the user only, approve it. Use this to rewrite a draft when the user asks (punchier, shorter, another tone). Agent rewrites must stay within the platform limit, keep to the brief's facts, and send the draft back to status draft (and off the calendar) for the user to re-approve.",
   schema: z.object({
     id: z.string(),
     title: z.string().max(160).optional(),
     body: z.string().min(1).max(8000).optional(),
-    status: z.enum(["draft", "approved"]).optional().describe("Only the user can approve"),
+    status: z.enum(["draft", "approved"]).optional().describe("Only the user can approve. Moving a scheduled draft back to draft takes it off the calendar."),
   }),
   http: { method: "POST" },
   run: async ({ id, ...patch }, ctx) => {
@@ -38,6 +38,7 @@ export default defineAction({
         ...(patch.body !== undefined ? { body } : {}),
         ...(textEdit ? { editedBy: actor } : {}),
         status: patch.status ?? (textEdit && actor === "agent" ? "draft" : row!.status),
+        ...((patch.status === "draft" || (textEdit && actor === "agent")) && row!.scheduledFor ? { scheduledFor: null } : {}),
         updatedAt: nowIso(),
       })
       .where(and(eq(drafts.ownerEmail, owner), eq(drafts.id, id)));

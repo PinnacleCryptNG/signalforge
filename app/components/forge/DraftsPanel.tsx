@@ -4,6 +4,7 @@ import {
   IconBrandInstagram,
   IconBrandLinkedin,
   IconBrandX,
+  IconCalendarEvent,
   IconCheck,
   IconCopy,
   IconMail,
@@ -12,19 +13,20 @@ import {
   IconWand,
 } from "@tabler/icons-react";
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router";
 import { toast } from "sonner";
 
 import { ago } from "../signals/format";
 import type { Brief, Draft, Platform } from "./types";
 
-const PLATFORMS: { id: Platform; label: string; Icon: typeof IconBrandX; limit: number; title?: string; hint: string }[] = [
+export const PLATFORMS: { id: Platform; label: string; Icon: typeof IconBrandX; limit: number; title?: string; hint: string }[] = [
   { id: "x", label: "X", Icon: IconBrandX, limit: 280, hint: "Hook post or thread. Put --- on its own line between posts." },
   { id: "linkedin", label: "LinkedIn", Icon: IconBrandLinkedin, limit: 3000, hint: "First line earns the click. Short paragraphs." },
   { id: "instagram", label: "Instagram", Icon: IconBrandInstagram, limit: 2200, hint: "Caption with a hook, story, CTA and hashtags." },
   { id: "newsletter", label: "Newsletter", Icon: IconMail, limit: 6000, title: "Subject line", hint: "A short issue with sources linked inline." },
   { id: "video", label: "Short video", Icon: IconVideo, limit: 2500, title: "Video title", hint: "45-60 s script: [HOOK], [BODY], [CTA] beats." },
 ];
-const SPEC = Object.fromEntries(PLATFORMS.map((p) => [p.id, p])) as Record<Platform, (typeof PLATFORMS)[number]>;
+export const SPEC = Object.fromEntries(PLATFORMS.map((p) => [p.id, p])) as Record<Platform, (typeof PLATFORMS)[number]>;
 const REWRITES = ["Punchier", "Shorter", "More personal", "More authoritative", "Stronger hook"];
 
 const len = (s: string) => [...s].length;
@@ -111,7 +113,7 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
                   className={`relative flex shrink-0 items-center gap-2 px-4 py-3 text-sm transition ${on ? "text-foreground" : "text-muted-foreground hover:text-foreground"} ${d ? "" : "opacity-50"}`}
                 >
                   <Icon className="size-4" /> {label}
-                  {d && <span className={`size-1.5 rounded-full ${d.status === "approved" ? "bg-[#7dd87d]" : overLimit(d) ? "bg-[#ff4a1a]" : "bg-[hsl(var(--primary))]"}`} />}
+                  {d && <span className={`size-1.5 rounded-full ${d.status !== "draft" ? "bg-[#7dd87d]" : overLimit(d) ? "bg-[#ff4a1a]" : "bg-[hsl(var(--primary))]"}`} />}
                   {on && <span className="sf-molten absolute inset-x-2 bottom-0 h-0.5 rounded-full" />}
                 </button>
               );
@@ -143,7 +145,14 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
   });
   const over = overLimit({ platform: draft.platform, body });
   const thread = draft.platform === "x" ? posts(body) : [];
-  const approved = status === "approved";
+  const approved = status !== "draft";
+  const scheduleIt = useActionMutation("schedule-draft", {
+    onSuccess: () => {
+      toast("On the calendar. Export it from Calendar any time.");
+      onChanged();
+    },
+    onError: (e: unknown) => toast.error(errText(e, "Couldn't schedule it")),
+  });
 
   const save = () => {
     const patch: Record<string, string> = {};
@@ -226,6 +235,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
             <IconCopy className="size-4" />
           </button>
         </div>
+        {approved && <ScheduleRow draft={draft} pending={scheduleIt.isPending} onSchedule={(iso) => scheduleIt.mutate({ id: draft.id, scheduledFor: iso } as never)} />}
         <p className="sf-mono -mt-2 text-[10px] uppercase tracking-wider text-muted-foreground">
           {draft.editedBy === "user" ? "Edited by you" : "Written by agent"} · {ago(draft.updatedAt)}
         </p>
@@ -255,6 +265,39 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
         </div>
       </aside>
     </div>
+  );
+}
+
+function nextHourLocal() {
+  const d = new Date(Date.now() + 60 * 60_000);
+  d.setMinutes(0, 0, 0);
+  return new Date(d.getTime() - d.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+}
+
+function ScheduleRow({ draft, pending, onSchedule }: { draft: Draft; pending: boolean; onSchedule: (iso: string) => void }) {
+  const [when, setWhen] = useState(nextHourLocal);
+  if (draft.scheduledFor) {
+    const at = new Date(draft.scheduledFor).toLocaleString([], { weekday: "short", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+    return (
+      <Link to="/calendar" className="-mt-1 flex items-center gap-2 rounded-lg border border-[hsl(var(--primary)/0.35)] bg-[hsl(var(--primary)/0.06)] px-3 py-2 text-xs transition hover:border-[hsl(var(--primary)/0.7)]">
+        <IconCalendarEvent className="size-4 text-[hsl(var(--primary))]" />
+        <span>{draft.status === "published" ? `Posted ${at}` : `On calendar · ${at}`}</span>
+      </Link>
+    );
+  }
+  return (
+    <form
+      className="-mt-1 flex gap-1.5"
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (when) onSchedule(new Date(when).toISOString());
+      }}
+    >
+      <input type="datetime-local" value={when} onChange={(e) => setWhen(e.target.value)} aria-label="Post time" className="sf-mono min-w-0 flex-1 rounded-md border border-border bg-background/60 px-2 py-1.5 text-[11px] [color-scheme:dark] outline-none focus:border-[hsl(var(--primary))]" />
+      <button type="submit" disabled={pending || !when} className="flex items-center gap-1 rounded-md border border-[hsl(var(--primary)/0.5)] px-2.5 text-xs font-semibold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.1)] disabled:opacity-40">
+        <IconCalendarEvent className="size-3.5" /> Schedule
+      </button>
+    </form>
   );
 }
 

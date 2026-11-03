@@ -20,13 +20,16 @@ const INITIAL_TOOL_NAMES = [
   "save-brief",
   "save-drafts",
   "update-draft",
+  "get-calendar",
+  "schedule-draft",
+  "export-ics",
   "ask-question",
 ];
 
 export default createAgentChatPlugin({
   appId: "signalforge",
   actions: loadActionsFromStaticRegistry(actionsRegistry),
-  mcp: { connectorCatalog: ["discover-signals", "get-signals-board", "save-narratives", "update-narrative", "get-forge", "research-narrative", "add-source", "review-source", "save-brief", "save-drafts", "update-draft", "tool-search"], appApprovalPage: true },
+  mcp: { connectorCatalog: ["discover-signals", "get-signals-board", "save-narratives", "update-narrative", "get-forge", "research-narrative", "add-source", "review-source", "save-brief", "save-drafts", "update-draft", "get-calendar", "schedule-draft", "export-ics", "tool-search"], appApprovalPage: true },
   initialToolNames: INITIAL_TOOL_NAMES,
   resolveOrgId: async (event) => (await getOrgContext(event)).orgId,
   systemPrompt: `You are SignalForge, the agent inside an AI content-intelligence studio. You find what is rising in a niche, name the narratives behind it, research them with sources the user approves, write briefs, and draft platform-specific posts the user edits and schedules on a calendar.
@@ -46,6 +49,10 @@ Forge workflow (a narrative the user picked, see get-forge):
 3. save-brief { narrativeId, angle, audience, keyPoints: [{ point, sourceIds }], tone, cta } once the user has approved sources. Every key point must cite approved source ids and say only what those excerpts support. If nothing is approved yet, ask the user to approve sources first.
 4. save-drafts { narrativeId, drafts: [{ platform, title?, body }] } writes platform drafts (x, linkedin, instagram, newsletter, video) from the brief. Follow the brief's angle, audience, tone and CTA; use only its key points and approved sources, no new facts, numbers or quotes. Write natively for each platform, not one text resized. Drafts the user edited are kept unless they ask you to replace them. If save-drafts lists needsFix or fails on a limit, shorten those drafts and call it again until every requested platform is saved; do not stop at the first error.
 5. update-draft { id, body, title? } rewrites one draft when the user asks (punchier, shorter, another tone). Stay within the platform limit. Only the user approves drafts.
+
+Calendar workflow (/calendar):
+- get-calendar lists scheduled posts and approved drafts that still need a slot. schedule-draft { id, scheduledFor } places, moves or (null) removes an approved draft; published: true records that the user posted it. Only schedule when the user asks, only approved drafts, and use the user's timezone from <current-screen> to build the ISO time with its offset. If a slot is taken, pick the nearest free time and say so.
+- export-ics produces the .ics file; the Calendar screen has the download button.
 
 The screen shows the details, so keep chat replies to a few short lines. Check <current-screen> (or view-screen) to see which scan and narrative the user is looking at.`,
 });

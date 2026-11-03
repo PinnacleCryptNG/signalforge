@@ -15,6 +15,7 @@ import { openCommandMenu } from "@agent-native/toolkit/app/shared";
 import { AgentNativeIcon } from "@agent-native/toolkit/app/shared/AgentNativeIcon";
 import {
   IconEdit,
+  IconCalendarEvent,
   IconFlame,
   IconRadar,
   IconLayoutSidebarLeftCollapse,
@@ -121,6 +122,7 @@ function persistActiveThreadId(threadId: string) {
 const NAV = [
   { to: "/signals", label: "Signals", Icon: IconRadar },
   { to: "/forge", label: "Forge", Icon: IconFlame },
+  { to: "/calendar", label: "Calendar", Icon: IconCalendarEvent },
 ] as const;
 
 function HomeNavLink({ collapsed }: { collapsed: boolean }) {
