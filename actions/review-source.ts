@@ -13,7 +13,7 @@ export default defineAction({
   schema: z.object({
     ids: z.array(z.string()).min(1).max(40),
     decision: z.enum(["approve", "reject", "pending"]),
-    note: z.string().max(300).optional().describe("One line on credibility or relevance"),
+    note: z.string().max(300).nullish().describe("One line on credibility or relevance"),
   }),
   http: { method: "POST" },
   run: async (args, ctx) => {
@@ -32,7 +32,7 @@ export default defineAction({
         : { recommendation: args.decision === "pending" ? ("" as const) : args.decision };
     await db
       .update(sources)
-      .set({ ...patch, ...(args.note !== undefined ? { note: args.note } : {}), updatedAt: nowIso() })
+      .set({ ...patch, ...(args.note != null ? { note: args.note } : {}), updatedAt: nowIso() })
       .where(where);
     return {
       updated: found.length,

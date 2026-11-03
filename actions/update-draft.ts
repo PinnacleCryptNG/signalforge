@@ -13,14 +13,20 @@ export default defineAction({
     "Edit one draft (title, body) or, for the user only, approve it. Use this to rewrite a draft when the user asks (punchier, shorter, another tone). Agent rewrites must stay within the platform limit, keep to the brief's facts, and send the draft back to status draft (and off the calendar) for the user to re-approve.",
   schema: z.object({
     id: z.string(),
-    title: z.string().max(160).optional(),
-    body: z.string().min(1).max(8000).optional(),
-    status: z.enum(["draft", "approved"]).optional().describe("Only the user can approve. Moving a scheduled draft back to draft takes it off the calendar."),
+    title: z.string().max(160).nullish(),
+    body: z.string().max(8000).nullish(),
+    status: z.enum(["draft", "approved"]).nullish().describe("Only the user can approve. Moving a scheduled draft back to draft takes it off the calendar."),
   }),
   http: { method: "POST" },
-  run: async ({ id, ...patch }, ctx) => {
+  run: async ({ id, ...raw }, ctx) => {
     const owner = requireOwner(ctx);
     const actor = actorFromCaller(ctx?.caller);
+    // Tool transports fill unused fields with null or ""; treat those as "leave unchanged".
+    const patch = {
+      title: raw.title == null || (actor === "agent" && !raw.title.trim()) ? undefined : raw.title,
+      body: raw.body?.trim() ? raw.body : undefined,
+      status: raw.status ?? undefined,
+    };
     const db = getDb();
     const [row] = await db.select().from(drafts).where(and(eq(drafts.ownerEmail, owner), eq(drafts.id, id)));
     if (!row) fail(`Draft ${id} not found.`, { errorCode: "not_found", statusCode: 404 });
