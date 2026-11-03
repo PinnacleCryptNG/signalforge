@@ -1,0 +1,20 @@
+diff --git a/dist/shared/password-policy.d.ts b/dist/shared/password-policy.d.ts
+index 6c83c16212957161d1f774f6c1f02812fd3f7c04..19e812103fa678cbc4ae4083cfa60e0f6fe9032b 100644
+--- a/dist/shared/password-policy.d.ts
++++ b/dist/shared/password-policy.d.ts
+@@ -1,4 +1,4 @@
+-export declare const PASSWORD_MIN_LENGTH = 12;
++export declare const PASSWORD_MIN_LENGTH = 8;
+ export declare const PASSWORD_MAX_LENGTH = 128;
+ export declare const PASSWORD_MIN_LENGTH_MESSAGE = "Choose a password with at least 12 characters.";
+ export declare const PASSWORD_MAX_LENGTH_MESSAGE = "Choose a password with no more than 128 characters.";
+diff --git a/dist/shared/password-policy.js b/dist/shared/password-policy.js
+index f1452867bb05de62e47e91f6b5a0cf9b813d69a7..040e7aac7c46c9b31172d8c84b7db3dc159cd1e8 100644
+--- a/dist/shared/password-policy.js
++++ b/dist/shared/password-policy.js
+@@ -1,4 +1,4 @@
+-export const PASSWORD_MIN_LENGTH = 12;
++export const PASSWORD_MIN_LENGTH = 8;
+ export const PASSWORD_MAX_LENGTH = 128;
+ export const PASSWORD_MIN_LENGTH_MESSAGE = `Choose a password with at least ${PASSWORD_MIN_LENGTH} characters.`;
+ export const PASSWORD_MAX_LENGTH_MESSAGE = `Choose a password with no more than ${PASSWORD_MAX_LENGTH} characters.`;
