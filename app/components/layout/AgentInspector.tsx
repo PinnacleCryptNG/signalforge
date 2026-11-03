@@ -35,7 +35,7 @@ export function AgentInspector({
       browserTabId={TAB_ID}
       openOnChatRunning={chatHomeHandoffActive}
       onFullscreenRequest={openAskAgentFullscreen}
-      emptyStateText="Your forge hand. It scans, researches and drafts; you approve every source and post."
+      emptyStateText="Your forge hand. Press Autopilot on any story and it researches, picks sources and drafts every post. You approve what goes out."
       agentPageHref="/settings/agent"
       suggestions={[
         "Scan what's rising in AI agents this week",

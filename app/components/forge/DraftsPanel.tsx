@@ -7,6 +7,7 @@ import {
   IconCalendarEvent,
   IconCheck,
   IconCopy,
+  IconLoader2,
   IconMail,
   IconSparkles,
   IconVideo,
@@ -43,6 +44,13 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
   const [picked, setPicked] = useState<Set<Platform>>(() => new Set(PLATFORMS.map((p) => p.id)));
   const draft = byPlatform.get(active);
   const editedCount = [...picked].filter((p) => byPlatform.get(p)?.editedBy === "user").length;
+  const approvable = drafts.filter((d) => d.status === "draft" && !overLimit(d));
+  const approveAll = useActionMutation("update-draft", { onError: (e: unknown) => toast.error(errText(e, "Couldn't approve")) });
+  const approveAllNow = async () => {
+    for (const d of approvable) await approveAll.mutateAsync({ id: d.id, status: "approved" } as never).catch(() => undefined);
+    onChanged();
+    toast(`${approvable.length} drafts approved. Schedule them below or on the Calendar.`);
+  };
 
   const writeAll = () => {
     const list = PLATFORMS.filter((p) => picked.has(p.id)).map((p) => p.label);
@@ -58,6 +66,16 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
             {brief ? "One draft per platform, written from the brief. Edit in place, ask for a rewrite, approve when it's ready." : "Drafts unlock once the brief exists."}
           </p>
         </div>
+        {approvable.length > 1 && (
+          <button
+            type="button"
+            onClick={() => void approveAllNow()}
+            disabled={approveAll.isPending}
+            className="flex items-center gap-1.5 rounded-lg bg-[hsl(var(--primary)/0.15)] px-3.5 py-2 text-sm font-bold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.25)] disabled:opacity-60"
+          >
+            {approveAll.isPending ? <IconLoader2 className="size-4 animate-spin" /> : <IconCheck className="size-4" />} Approve all {approvable.length}
+          </button>
+        )}
       </div>
 
       {brief && (

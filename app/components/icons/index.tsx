@@ -62,6 +62,12 @@ export const IconSparkles = make("IconSparkles", <>
   <path d="M18 14.5c.3 1.8 1.2 2.7 3 3-1.8.3-2.7 1.2-3 3-.3-1.8-1.2-2.7-3-3 1.8-.3 2.7-1.2 3-3z" {...A} />
 </>);
 export const IconAgent = IconSparkles;
+/** Autopilot: a loop the agent runs on its own, with a spark bolt at its heart. */
+export const IconAutopilot = make("IconAutopilot", <>
+  <path d="M20.5 12a8.5 8.5 0 1 1-2.5-6" />
+  <path d="M18.4 2.8v3.4H15" />
+  <path d="M12.9 7.2 9.6 12.6h3.2l-1 4.2 3.4-5.6H12z" {...A} />
+</>);
 export const IconLoader2 = make("IconLoader2", <>
   <path d="M12 3.5a8.5 8.5 0 1 1-8.5 8.5" opacity=".3" />
   <path d="M3.5 12A8.5 8.5 0 0 1 12 3.5" {...A} />

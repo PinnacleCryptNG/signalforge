@@ -25,6 +25,7 @@ export type Narrative = {
   stage: Stage;
   status: "new" | "picked" | "dismissed";
   editedBy: "user" | "agent";
+  autopilot: number;
   updatedAt: string;
 };
 

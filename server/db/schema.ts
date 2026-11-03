@@ -55,6 +55,7 @@ export const narratives = pgTable("narratives", {
   stage: text("stage", { enum: STAGES }).notNull().default("emerging"),
   status: text("status", { enum: NARRATIVE_STATUSES }).notNull().default("new"),
   editedBy: text("edited_by", { enum: ACTORS }).notNull().default("agent"),
+  autopilot: integer("autopilot").notNull().default(0),
   updatedAt: now(),
 });
 

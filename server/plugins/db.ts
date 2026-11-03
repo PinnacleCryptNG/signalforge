@@ -134,6 +134,11 @@ export default runMigrations(
       name: "sf-sources_note",
       sql: `ALTER TABLE sources ADD COLUMN IF NOT EXISTS note TEXT NOT NULL DEFAULT ''`,
     },
+    {
+      version: 13,
+      name: "sf-narratives_autopilot",
+      sql: `ALTER TABLE narratives ADD COLUMN IF NOT EXISTS autopilot INTEGER NOT NULL DEFAULT 0`,
+    },
   ],
   { table: "signalforge_migrations" },
 );

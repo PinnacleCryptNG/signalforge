@@ -1,9 +1,11 @@
 import { FilterTabs } from "@/components/forge/FilterTabs";
 import { askAgent } from "@/lib/ask-agent";
+import { autopilotPrompt, useAutopilot } from "@/lib/autopilot";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
 import {
   IconArrowUpRight,
+  IconAutopilot,
   IconCheck,
   IconFileText,
   IconFlame,
@@ -69,6 +71,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
     onError: (e: unknown) => toast.error(errText(e, "Research failed")),
   });
   const unpick = useActionMutation("update-narrative", { onSuccess: () => void refresh() });
+  const autopilot = useAutopilot();
 
   if (isLoading) return <Shell><p className="sf-mono mt-16 text-sm text-muted-foreground">Heating the forge…</p></Shell>;
   if (!forge?.queue.length || !sel || !n) return <Shell><EmptyForge /></Shell>;
@@ -116,6 +119,14 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
               </p>
             )}
             <Steps step={step} />
+            <AutopilotBar
+              on={!!n.autopilot}
+              done={sel.drafts.length > 0}
+              pending={autopilot.pending}
+              onStart={() => autopilot.start(n)}
+              onRerun={() => void askAgent(autopilotPrompt(n), { newTab: true })}
+              onStop={() => autopilot.stop(n.id)}
+            />
           </section>
 
           <SourcesPanel
@@ -133,6 +144,52 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
         </div>
       </div>
     </Shell>
+  );
+}
+
+function AutopilotBar({ on, done, pending, onStart, onRerun, onStop }: { on: boolean; done: boolean; pending: boolean; onStart: () => void; onRerun: () => void; onStop: () => void }) {
+  if (!on && done) return null;
+  return (
+    <div className={`sf-card mt-6 flex flex-wrap items-center gap-x-4 gap-y-3 rounded-xl p-4 ${on ? "border-[hsl(var(--primary)/0.55)]" : ""}`}>
+      <div className="sf-molten flex size-10 shrink-0 items-center justify-center rounded-xl text-[#1a0e05]">
+        <IconAutopilot className="size-5" />
+      </div>
+      <div className="min-w-0 flex-1 basis-56">
+        <p className="text-[15px] font-semibold">{on ? "Autopilot is on" : "Let the agent do the work"}</p>
+        <p className="text-[13px] leading-snug text-muted-foreground">
+          {on
+            ? done
+              ? "Drafts are ready below. Read them and approve the ones you like. Run again for a fresh set."
+              : "The agent is picking sources, writing the brief and drafting all 5 posts. You'll only need to approve the drafts."
+            : "Autopilot picks the sources, writes the brief and drafts all 5 posts. You just approve the drafts. Prefer to check each source? Use the steps below."}
+        </p>
+      </div>
+      <div className="flex shrink-0 flex-wrap gap-2 max-sm:w-full">
+        {on ? (
+          <>
+            <button type="button" onClick={onStop} className="rounded-lg border border-border px-3 py-2 text-sm text-muted-foreground transition hover:text-foreground max-sm:flex-1">
+              Turn off
+            </button>
+            <button
+              type="button"
+              onClick={onRerun}
+              className="flex items-center justify-center gap-1.5 rounded-lg border border-[hsl(var(--primary)/0.5)] bg-[hsl(var(--primary)/0.08)] px-3.5 py-2 text-sm font-semibold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.16)] max-sm:flex-1"
+            >
+              <IconAutopilot className="size-4" /> {done ? "Run again" : "Restart"}
+            </button>
+          </>
+        ) : (
+          <button
+            type="button"
+            onClick={onStart}
+            disabled={pending}
+            className="sf-molten flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:opacity-60 max-sm:w-full"
+          >
+            <IconAutopilot className="size-4" /> Run Autopilot
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
 

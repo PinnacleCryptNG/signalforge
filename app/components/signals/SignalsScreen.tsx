@@ -1,8 +1,9 @@
 import { FilterTabs } from "@/components/forge/FilterTabs";
 import { askAgent } from "@/lib/ask-agent";
+import { useAutopilot } from "@/lib/autopilot";
 import { useActionMutation, useActionQuery, useDbSync, writeClientAppState } from "@agent-native/core/client/hooks";
 import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
-import { IconArrowUpRight, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@/components/icons";
+import { IconArrowUpRight, IconAutopilot, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
@@ -58,6 +59,8 @@ export function SignalsScreen() {
     onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Scan failed"),
   });
   const update = useActionMutation("update-narrative", { onSuccess: () => void refresh() });
+  const autopilot = useAutopilot();
+  const topStory = board?.narratives.find((n) => n.status !== "dismissed");
 
   const byId = useMemo(() => new Map((board?.signals ?? []).map((s) => [s.id, s])), [board?.signals]);
   const scanning = discover.isPending;
@@ -155,6 +158,15 @@ export function SignalsScreen() {
                   The stories behind {board.signals.length} signals for “{scan.niche}”. Pick one to forge into a campaign.
                 </p>
               </div>
+              <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => topStory && autopilot.start(topStory)}
+                disabled={!topStory}
+                className="sf-molten flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:opacity-40"
+              >
+                <IconAutopilot className="size-4" /> Autopilot the top story
+              </button>
               <button
                 type="button"
                 onClick={sharpen}
@@ -162,6 +174,7 @@ export function SignalsScreen() {
               >
                 <IconSparkles className="size-4" /> Sharpen with agent
               </button>
+              </div>
             </div>
 
             {board.narratives.length === 0 ? (
@@ -177,6 +190,7 @@ export function SignalsScreen() {
                     index={i}
                     evidence={n.signalIds.map((id) => byId.get(id)).filter((s): s is Signal => !!s)}
                     onPatch={(patch) => update.mutate({ id: n.id, ...patch } as never)}
+                    onAutopilot={() => autopilot.start(n)}
                     onForge={() => {
                       if (n.status !== "picked")
                         update.mutate({ id: n.id, status: "picked" } as never, {
@@ -280,12 +294,14 @@ function NarrativeCard({
   evidence,
   onPatch,
   onForge,
+  onAutopilot,
 }: {
   n: Narrative;
   index: number;
   evidence: Signal[];
   onPatch: (p: Partial<Pick<Narrative, "title" | "thesis" | "status">>) => void;
   onForge: () => void;
+  onAutopilot: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(n.title);
@@ -361,24 +377,35 @@ function NarrativeCard({
           {evidence.length} signals · {feeds.length} feed{feeds.length === 1 ? "" : "s"}
           {n.editedBy === "user" ? " · edited by you" : ""}
         </span>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           onClick={() => onPatch({ status: "dismissed" })}
-          className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-[13px] font-medium text-muted-foreground transition hover:border-foreground/25 hover:text-foreground"
+          aria-label="Dismiss"
+          title="Dismiss"
+          className="flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-[13px] font-medium text-muted-foreground transition hover:border-foreground/25 hover:text-foreground"
         >
-          <IconX className="size-3.5" /> Dismiss
+          <IconX className="size-3.5" />
         </button>
         <button
           type="button"
           onClick={onForge}
-          className={`flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[13px] font-semibold transition ${
-            picked ? "bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]" : "sf-molten text-[#1a0e05] hover:brightness-110"
+          className={`flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[13px] font-semibold transition ${
+            picked ? "bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]" : "border border-border text-foreground/85 hover:border-[hsl(var(--primary)/0.6)]"
           }`}
         >
           {picked ? <IconCheck className="size-3.5" /> : <IconFlame className="size-3.5" />}
-          {picked ? "Open in Forge" : "Forge this"}
+          {picked ? "Open in Forge" : "Step by step"}
         </button>
+        {!n.autopilot && (
+          <button
+            type="button"
+            onClick={onAutopilot}
+            className="sf-molten flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[13px] font-bold text-[#1a0e05] transition hover:brightness-110"
+          >
+            <IconAutopilot className="size-3.5" /> Autopilot
+          </button>
+        )}
         </div>
       </div>
       </div>

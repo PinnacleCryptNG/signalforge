@@ -109,6 +109,15 @@ function LayoutShell({ children }: LayoutProps) {
     setMobileSidebarOpen(false);
   }, [location.pathname]);
 
+  // On phones the agent panel covers the page, so close it when it sends the user to Settings (e.g. "Custom keys").
+  useEffect(() => {
+    const closeAgentOnPhone = () => {
+      if (window.matchMedia("(max-width: 767px)").matches) window.dispatchEvent(new Event("agent-panel:close"));
+    };
+    window.addEventListener("agent-panel:open-settings", closeAgentOnPhone);
+    return () => window.removeEventListener("agent-panel:open-settings", closeAgentOnPhone);
+  }, []);
+
   useEffect(() => {
     const closeMobileSidebar = () => setMobileSidebarOpen(false);
     window.addEventListener("agent-chat:open-thread", closeMobileSidebar);
