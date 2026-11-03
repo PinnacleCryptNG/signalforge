@@ -76,7 +76,7 @@ export function SignalsScreen() {
   const wire = (board?.signals ?? []).filter((s) => feedFilter === "all" || s.feed === feedFilter);
 
   return (
-    <div className="sf-stage relative min-h-full overflow-x-hidden">
+    <div className="sf-stage relative min-h-full overflow-x-clip">
       <div className="sf-grid-lines pointer-events-none absolute inset-x-0 top-0 h-[420px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-8">
         <section className="sf-rise">
@@ -169,7 +169,7 @@ export function SignalsScreen() {
                 No clear narratives yet. Ask the agent to sharpen, or try a broader niche.
               </p>
             ) : (
-              <div className="mt-5 grid gap-4 md:grid-cols-2">
+              <div className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
                 {board.narratives.map((n, i) => (
                   <NarrativeCard
                     key={n.id}
@@ -295,7 +295,7 @@ function NarrativeCard({
   const feeds = [...new Set(evidence.map((s) => s.feed))];
 
   return (
-    <article className={`sf-card sf-rise flex flex-col rounded-2xl p-5 ${picked ? "sf-card-picked" : ""}`} style={{ animationDelay: `${index * 70}ms` }}>
+    <article className={`sf-card sf-rise flex min-w-0 flex-col rounded-2xl p-5 ${picked ? "sf-card-picked" : ""}`} style={{ animationDelay: `${index * 70}ms` }}>
       <div className="flex items-center gap-3">
         <span className={`sf-mono rounded border px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${stage.className}`} title={stage.hint}>
           {stage.label}

@@ -87,25 +87,27 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
       <div className="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
         <Queue queue={forge.queue} activeId={n.id} />
 
-        <div className="min-w-0">
+        <div className="@container min-w-0">
           <section className="sf-rise" key={n.id}>
-            <div className="flex flex-wrap items-center gap-3">
-              <span className={`sf-mono rounded border px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${stage.className}`}>{stage.label}</span>
-              <span className="sf-mono text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
-                {sel.niche} · {sel.region} · momentum {n.momentum}
-              </span>
+            <div className="flex items-start gap-3">
+              <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
+                <span className={`sf-mono rounded border px-2 py-0.5 text-[10px] uppercase tracking-[0.18em] ${stage.className}`}>{stage.label}</span>
+                <span className="sf-mono min-w-0 text-[11px] uppercase tracking-[0.2em] text-muted-foreground">
+                  {sel.niche} · {sel.region} · momentum {n.momentum}
+                </span>
+              </div>
               <button
                 type="button"
                 onClick={() => {
                   unpick.mutate({ id: n.id, status: "new" } as never);
                   navigate("/forge");
                 }}
-                className="sf-mono ml-auto text-[11px] text-muted-foreground transition hover:text-foreground"
+                className="sf-mono shrink-0 rounded-md border border-border px-2.5 py-1 text-[11px] text-muted-foreground transition hover:border-foreground/30 hover:text-foreground"
               >
                 Unpick
               </button>
             </div>
-            <h1 className="sf-display mt-3 text-3xl font-extrabold leading-[1.05] sm:text-5xl">{n.title}</h1>
+            <h1 className="sf-display mt-3 text-3xl font-extrabold leading-[1.05] @2xl:text-5xl">{n.title}</h1>
             {n.thesis && <p className="mt-3 max-w-3xl text-base leading-relaxed text-foreground/80">{n.thesis}</p>}
             {n.whyNow && (
               <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
@@ -136,7 +138,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="sf-stage relative min-h-full overflow-x-hidden">
+    <div className="sf-stage relative min-h-full overflow-x-clip">
       <div className="sf-grid-lines pointer-events-none absolute inset-x-0 top-0 h-[360px]" />
       <div className="relative mx-auto max-w-6xl px-4 pb-24 pt-8 sm:px-8">{children}</div>
     </div>
@@ -160,7 +162,7 @@ function EmptyForge() {
 
 function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string }) {
   return (
-    <aside className="min-w-0">
+    <aside className="min-w-0 xl:sticky xl:top-6 xl:self-start">
       <p className="sf-mono text-[11px] uppercase tracking-[0.24em] text-muted-foreground">On the anvil · {queue.length}</p>
       <nav className="mt-3 flex gap-2 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible">
         {queue.map((q) => {
@@ -176,13 +178,15 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
                 <span className={q.approved ? "text-[hsl(var(--primary))]" : ""}>
                   {q.approved}/{q.sources} src
                 </span>
-                <span>·</span>
-                <span className={q.hasBrief ? "text-[hsl(var(--primary))]" : ""}>{q.hasBrief ? "brief ✓" : "no brief"}</span>
+                <span className={q.hasBrief ? "text-[hsl(var(--primary))]" : ""}>
+                  <span className="mr-1.5 text-muted-foreground">·</span>
+                  {q.hasBrief ? "brief ✓" : "no brief"}
+                </span>
                 {q.drafts > 0 && (
-                  <>
-                    <span>·</span>
-                    <span className="text-[hsl(var(--primary))]">{q.drafts} drafts</span>
-                  </>
+                  <span className="text-[hsl(var(--primary))]">
+                    <span className="mr-1.5 text-muted-foreground">·</span>
+                    {q.drafts} drafts
+                  </span>
                 )}
               </div>
             </Link>
@@ -193,11 +197,16 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
   );
 }
 
-const STEPS = ["Research", "Approve sources", "Brief", "Drafts"];
+const STEPS = [
+  { label: "Research", short: "Research" },
+  { label: "Approve sources", short: "Sources" },
+  { label: "Brief", short: "Brief" },
+  { label: "Drafts", short: "Drafts" },
+];
 function Steps({ step }: { step: number }) {
   return (
-    <ol className="mt-6 grid grid-cols-4 gap-1.5">
-      {STEPS.map((label, i) => {
+    <ol className="@container mt-6 grid grid-cols-4 gap-2">
+      {STEPS.map(({ label, short }, i) => {
         const done = i < step;
         const current = i === step;
         return (
@@ -205,8 +214,12 @@ function Steps({ step }: { step: number }) {
             <div className="h-1 overflow-hidden rounded-full bg-muted">
               <div className={`sf-molten h-full transition-[width] duration-700 ${done ? "sf-heat" : ""}`} style={{ width: done ? "100%" : current ? "35%" : "0%" }} />
             </div>
-            <p className={`sf-mono mt-1.5 truncate text-[10px] uppercase tracking-wider ${done || current ? "text-foreground" : "text-muted-foreground/60"}`}>
-              {String(i + 1).padStart(2, "0")} {label}
+            <p className={`sf-mono mt-1.5 text-[9px] uppercase leading-snug @md:text-[10px] @md:tracking-wider ${done || current ? "text-foreground" : "text-muted-foreground/60"}`}>
+              <span className={done || current ? "text-[hsl(var(--primary))]" : ""}>{String(i + 1).padStart(2, "0")}</span>
+              <span className="block truncate @lg:ml-1.5 @lg:inline">
+                <span className="@md:hidden">{short}</span>
+                <span className="hidden @md:inline">{label}</span>
+              </span>
             </p>
           </li>
         );
@@ -396,8 +409,8 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
     <li className={`sf-card sf-rise flex flex-col rounded-xl p-4 ${tone}`} style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}>
       <div className="sf-mono flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
         <span className="truncate font-bold text-foreground/70">{s.publisher}</span>
-        {s.publishedAt && <span>· {ago(s.publishedAt)}</span>}
-        {s.addedBy === "user" && <span className="text-[hsl(var(--primary))]">· added by you</span>}
+        {s.publishedAt && <span className="shrink-0 whitespace-nowrap">· {ago(s.publishedAt)}</span>}
+        {s.addedBy === "user" && <span className="shrink-0 whitespace-nowrap text-[hsl(var(--primary))]">· added by you</span>}
       </div>
       <a href={s.url} target="_blank" rel="noreferrer" className="group mt-1.5 flex items-start gap-1.5">
         <h3 className="line-clamp-2 text-[15px] font-semibold leading-snug group-hover:underline">{s.title}</h3>
@@ -498,14 +511,14 @@ function BriefPanel({
       )}
 
       {brief && (
-        <div className="sf-card sf-rise mt-5 rounded-2xl p-5 sm:p-7">
+        <div className="sf-card sf-rise @container mt-5 rounded-2xl p-5 sm:p-7">
           {brief.unapprovedCitations.length > 0 && (
             <p className="mb-4 rounded-md bg-[#ff4a1a]/10 px-3 py-2 text-xs text-[#ff8a5c]">
               {brief.unapprovedCitations.length} cited source{brief.unapprovedCitations.length === 1 ? " is" : "s are"} no longer approved. Rewrite or edit the points that use them.
             </p>
           )}
           <Field label="Angle" value={brief.angle} big onSave={(v) => patch({ angle: v })} />
-          <div className="mt-5 grid gap-5 sm:grid-cols-3">
+          <div className="mt-5 grid gap-5 @xl:grid-cols-3">
             <Field label="Audience" value={brief.audience} onSave={(v) => patch({ audience: v })} />
             <Field label="Tone" value={brief.tone} onSave={(v) => patch({ tone: v })} />
             <Field label="Call to action" value={brief.cta} onSave={(v) => patch({ cta: v })} />
@@ -540,8 +553,8 @@ function Field({ label, value, big, onSave }: { label: string; value: string; bi
         onChange={(e) => setV(e.target.value)}
         onBlur={() => v.trim() !== value && v.trim().length >= (label === "Angle" ? 3 : 0) && onSave(v.trim())}
         placeholder="—"
-        className={`mt-1 min-h-9 w-full resize-none rounded-md [field-sizing:content] border border-transparent bg-transparent px-1.5 py-1 outline-none transition hover:border-border focus:border-[hsl(var(--primary))] focus:bg-background/60 ${
-          big ? "sf-display text-xl font-bold leading-snug sm:text-2xl" : "text-sm leading-relaxed"
+        className={`-mx-1.5 mt-1 min-h-9 w-[calc(100%+0.75rem)] resize-none rounded-md [field-sizing:content] border border-transparent bg-transparent px-1.5 py-1 outline-none transition hover:border-border focus:border-[hsl(var(--primary))] focus:bg-background/60 ${
+          big ? "sf-display text-lg font-bold leading-snug @lg:text-xl @2xl:text-2xl" : "text-sm leading-relaxed"
         }`}
       />
     </label>

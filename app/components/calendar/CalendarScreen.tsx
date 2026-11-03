@@ -166,9 +166,9 @@ export function CalendarScreen() {
   return (
     <div className="@container mx-auto w-full max-w-7xl px-4 pb-24 pt-6 sm:px-8">
       <header className="sf-rise flex flex-wrap items-end gap-4">
-        <div className="min-w-0 flex-1">
+        <div className="min-w-[min(100%,22rem)] flex-1">
           <p className="sf-mono text-[11px] uppercase tracking-[0.28em] text-[hsl(var(--primary))]">Publishing calendar</p>
-          <h1 className="sf-display mt-1 text-3xl font-bold sm:text-4xl">{label}</h1>
+          <h1 className="sf-display mt-1 text-3xl font-bold @2xl:text-4xl">{label}</h1>
           <p className="mt-1 text-sm text-muted-foreground">You post, SignalForge keeps the plan. Approved drafts land here; export to any calendar app.</p>
         </div>
         <div className="flex items-center gap-2 max-sm:w-full">
@@ -198,7 +198,7 @@ export function CalendarScreen() {
         <div className="flex flex-wrap items-center gap-2">
           <h2 className="sf-display text-lg font-bold">Ready to schedule</h2>
           <span className="sf-mono rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">{ready.length}</span>
-          <p className="ml-auto text-xs text-muted-foreground max-sm:ml-0 max-sm:w-full">
+          <p className="w-full text-xs text-muted-foreground @2xl:ml-auto @2xl:w-auto">
             {heldItem ? (
               <span className="text-[hsl(var(--primary))]">Now tap a day to place it.</span>
             ) : (
@@ -345,7 +345,7 @@ function Event(props: { d: Item; editing: boolean; onEdit: () => void; onMove: (
           <button type="submit" className="sf-molten rounded-md py-1 text-xs font-bold text-[#1a0e05]">Move here</button>
         </form>
       )}
-      <div className="-mx-1 mt-2 flex flex-wrap items-center">
+      <div className="-mx-1 mt-2 flex items-center gap-0.5 @4xl:justify-between">
         <Act label={published ? "Mark not posted" : "Mark published"} onClick={props.onPublish} on={published}>
           <IconCheck className="size-3.5" />
         </Act>
@@ -372,7 +372,7 @@ function Act({ label, onClick, on, children }: { label: string; onClick: () => v
       title={label}
       aria-label={label}
       onClick={onClick}
-      className={`rounded-md border p-1.5 transition ${on ? "border-[hsl(var(--primary)/0.5)] text-[hsl(var(--primary))]" : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"}`}
+      className={`rounded-md border p-1.5 transition @4xl:p-1 ${on ? "border-[hsl(var(--primary)/0.5)] text-[hsl(var(--primary))]" : "border-transparent text-muted-foreground hover:border-border hover:text-foreground"}`}
     >
       {children}
     </button>

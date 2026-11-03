@@ -99,7 +99,6 @@ export default function Landing() {
       <main>
         <section className="lp-hero">
           <div className="lp-hero-copy">
-            <p className="lp-eyebrow"><span className="lp-dot" /> AI content studio · you approve everything</p>
             <h1 className="lp-h1">
               Turn what's <span className="lp-cold">trending</span> into a week of <span className="lp-hot">posts.</span>
             </h1>
