@@ -172,7 +172,7 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
               className={`sf-card block min-w-[220px] rounded-xl px-3.5 py-3 transition xl:min-w-0 ${active ? "sf-card-picked" : "opacity-80 hover:opacity-100"}`}
             >
               <p className="line-clamp-2 text-sm font-semibold leading-snug">{q.title}</p>
-              <div className="sf-mono mt-2 flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground">
+              <div className="sf-mono mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 whitespace-nowrap text-[9.5px] uppercase text-muted-foreground">
                 <span className={q.approved ? "text-[hsl(var(--primary))]" : ""}>
                   {q.approved}/{q.sources} src
                 </span>
