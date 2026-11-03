@@ -18,14 +18,16 @@ export function useAutopilot() {
   const start = (n: { id: string; title: string }) => {
     navigate(`/forge/${n.id}`);
     toast("Autopilot is on. The agent is picking sources and writing your drafts.");
-    set.mutate({ id: n.id, on: true } as never, {
-      onSuccess: (res: unknown) => {
+    // Signals unmounts as soon as we navigate, and per-call mutate callbacks are dropped on unmount, so await the promise.
+    void set
+      .mutateAsync({ id: n.id, on: true } as never)
+      .then((res: unknown) => {
         const id = (res as { id?: string } | undefined)?.id ?? n.id;
         if (id !== n.id) navigate(`/forge/${id}`, { replace: true });
         void queryClient.invalidateQueries();
         void askAgent(autopilotPrompt({ id, title: n.title }), { newTab: true });
-      },
-    });
+      })
+      .catch(() => {});
   };
   const stop = (id: string) =>
     set.mutate({ id, on: false } as never, { onSuccess: () => void queryClient.invalidateQueries() });
