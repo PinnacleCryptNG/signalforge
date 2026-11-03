@@ -3,7 +3,7 @@ import { and, eq, inArray, ne } from "drizzle-orm";
 import { z } from "zod";
 
 import { getDb } from "../server/db/index.js";
-import { briefs, narratives, sources, STAGES } from "../server/db/schema.js";
+import { briefs, drafts, narratives, sources, STAGES } from "../server/db/schema.js";
 import { requireOwner } from "../server/lib/owner.js";
 import { actorFromCaller, getBoard, newId, nowIso } from "../server/lib/store.js";
 
@@ -69,6 +69,7 @@ export default defineAction({
       if (!replaces.length) continue;
       await db.update(sources).set({ narrativeId: row.id }).where(and(eq(sources.ownerEmail, owner), inArray(sources.narrativeId, replaces)));
       await db.update(briefs).set({ narrativeId: row.id }).where(and(eq(briefs.ownerEmail, owner), inArray(briefs.narrativeId, replaces)));
+      await db.update(drafts).set({ narrativeId: row.id }).where(and(eq(drafts.ownerEmail, owner), inArray(drafts.narrativeId, replaces)));
     }
     if (superseded.length) await db.delete(narratives).where(and(eq(narratives.ownerEmail, owner), inArray(narratives.id, superseded)));
     const kept = board.narratives.filter((n) => n.status === "picked" && !superseded.includes(n.id)).map((n) => ({ id: n.id, title: n.title }));

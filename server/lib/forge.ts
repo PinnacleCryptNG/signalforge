@@ -2,7 +2,8 @@ import { fail } from "@agent-native/core/action";
 import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { getDb } from "../db/index.js";
-import { briefs, narratives, scans, sources, type Actor, type SignalRow, type SourceRow } from "../db/schema.js";
+import { briefs, drafts, narratives, scans, sources, type Actor, type SignalRow, type SourceRow } from "../db/schema.js";
+import { listDrafts } from "./drafts.js";
 import { searchFeeds } from "./feeds.js";
 import { signalScore } from "./narratives.js";
 import { hostOf, isHttpUrl, readPage } from "./research.js";
@@ -49,12 +50,13 @@ export async function getForge(owner: string, narrativeId?: string) {
     .where(and(eq(narratives.ownerEmail, owner), eq(narratives.status, "picked")))
     .orderBy(desc(narratives.updatedAt));
   const pickedIds = picked.map((p) => p.id);
-  const [srcRows, briefRows] = pickedIds.length
+  const [srcRows, briefRows, draftRows] = pickedIds.length
     ? await Promise.all([
         db.select({ narrativeId: sources.narrativeId, status: sources.status }).from(sources).where(and(eq(sources.ownerEmail, owner), inArray(sources.narrativeId, pickedIds))),
         db.select({ narrativeId: briefs.narrativeId }).from(briefs).where(and(eq(briefs.ownerEmail, owner), inArray(briefs.narrativeId, pickedIds))),
+        db.select({ narrativeId: drafts.narrativeId }).from(drafts).where(and(eq(drafts.ownerEmail, owner), inArray(drafts.narrativeId, pickedIds))),
       ])
-    : [[], []];
+    : [[], [], []];
   const withBrief = new Set(briefRows.map((b) => b.narrativeId));
   const queue = picked.map((p) => ({
     id: p.id,
@@ -64,16 +66,18 @@ export async function getForge(owner: string, narrativeId?: string) {
     sources: srcRows.filter((s) => s.narrativeId === p.id).length,
     approved: srcRows.filter((s) => s.narrativeId === p.id && s.status === "approved").length,
     hasBrief: withBrief.has(p.id),
+    drafts: draftRows.filter((d) => d.narrativeId === p.id).length,
   }));
 
   const selectedId = narrativeId ?? queue[0]?.id;
   if (!selectedId) return { queue, selected: null };
   const narrative = await getNarrative(owner, selectedId);
-  const [[scan], evidence, srcs, brief] = await Promise.all([
+  const [[scan], evidence, srcs, brief, draftList] = await Promise.all([
     db.select().from(scans).where(and(eq(scans.ownerEmail, owner), eq(scans.id, narrative.scanId))),
     signalsByIds(owner, narrative.signalIds),
     listSources(owner, selectedId),
     getBrief(owner, selectedId),
+    listDrafts(owner, selectedId),
   ]);
   const approvedIds = new Set(srcs.filter((s) => s.status === "approved").map((s) => s.id));
   return {
@@ -85,6 +89,7 @@ export async function getForge(owner: string, narrativeId?: string) {
       evidence: evidence.sort((a, b) => b.score - a.score),
       sources: srcs,
       brief: brief && { ...brief, unapprovedCitations: brief.sourceIds.filter((id) => !approvedIds.has(id)) },
+      drafts: draftList,
     },
   };
 }

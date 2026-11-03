@@ -23,6 +23,7 @@ import { toast } from "sonner";
 import { TAB_ID } from "@/lib/tab-id";
 
 import { ago, STAGE_META } from "../signals/format";
+import { DraftsPanel } from "./DraftsPanel";
 import type { Brief, Forge, KeyPoint, Source, SourceStatus } from "./types";
 
 const errText = (e: unknown, fallback: string) => (e instanceof Error ? e.message : fallback);
@@ -51,10 +52,11 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
         title: n?.title ?? null,
         sources: sel ? { total: sel.sources.length, approved: sel.sources.filter((s) => s.status === "approved").length } : null,
         hasBrief: !!sel?.brief,
+        drafts: sel ? sel.drafts.map((d) => ({ id: d.id, platform: d.platform, status: d.status })) : [],
       },
       { requestSource: TAB_ID },
     );
-  }, [n?.id, sel?.sources, sel?.brief]);
+  }, [n?.id, sel?.sources, sel?.brief, sel?.drafts]);
 
   const refresh = () => queryClient.invalidateQueries();
   const research = useActionMutation("research-narrative", {
@@ -72,7 +74,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
 
   const approved = sel.sources.filter((s) => s.status === "approved");
   const stage = STAGE_META[n.stage];
-  const step = sel.brief ? 3 : approved.length ? 2 : sel.sources.length ? 1 : 0;
+  const step = sel.drafts.length ? 4 : sel.brief ? 3 : approved.length ? 2 : sel.sources.length ? 1 : 0;
 
   const agentResearch = () =>
     sendToAgentChat({
@@ -133,6 +135,8 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
           />
 
           <BriefPanel narrativeId={n.id} brief={sel.brief} approved={approved} onAgent={agentBrief} onChanged={refresh} />
+
+          <DraftsPanel narrative={n} brief={sel.brief} drafts={sel.drafts} onChanged={refresh} />
         </div>
       </div>
     </Shell>
@@ -183,6 +187,12 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
                 </span>
                 <span>·</span>
                 <span className={q.hasBrief ? "text-[hsl(var(--primary))]" : ""}>{q.hasBrief ? "brief ✓" : "no brief"}</span>
+                {q.drafts > 0 && (
+                  <>
+                    <span>·</span>
+                    <span className="text-[hsl(var(--primary))]">{q.drafts} drafts</span>
+                  </>
+                )}
               </div>
             </Link>
           );
@@ -206,7 +216,6 @@ function Steps({ step }: { step: number }) {
             </div>
             <p className={`sf-mono mt-1.5 truncate text-[10px] uppercase tracking-wider ${done || current ? "text-foreground" : "text-muted-foreground/60"}`}>
               {String(i + 1).padStart(2, "0")} {label}
-              {i === 3 ? " · next" : ""}
             </p>
           </li>
         );

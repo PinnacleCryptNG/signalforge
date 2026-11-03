@@ -34,7 +34,7 @@ export type Brief = {
   unapprovedCitations: string[];
 };
 
-export type QueueItem = { id: string; title: string; stage: Stage; momentum: number; sources: number; approved: number; hasBrief: boolean };
+export type QueueItem = { id: string; title: string; stage: Stage; momentum: number; sources: number; approved: number; hasBrief: boolean; drafts: number };
 
 export type Forge = {
   queue: QueueItem[];
@@ -45,5 +45,21 @@ export type Forge = {
     evidence: Signal[];
     sources: Source[];
     brief: Brief | null;
+    drafts: Draft[];
   } | null;
+};
+
+export type Platform = "x" | "linkedin" | "instagram" | "newsletter" | "video";
+
+export type Draft = {
+  id: string;
+  narrativeId: string;
+  briefId: string;
+  platform: Platform;
+  title: string;
+  body: string;
+  status: "draft" | "approved" | "scheduled" | "published";
+  scheduledFor: string | null;
+  editedBy: "user" | "agent";
+  updatedAt: string;
 };
