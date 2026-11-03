@@ -124,6 +124,16 @@ export default runMigrations(
       name: "sf-drafts_owner_sched_idx",
       sql: `CREATE INDEX IF NOT EXISTS drafts_owner_sched_idx ON drafts (owner_email, scheduled_for)`,
     },
+    {
+      version: 11,
+      name: "sf-sources_recommendation",
+      sql: `ALTER TABLE sources ADD COLUMN IF NOT EXISTS recommendation TEXT NOT NULL DEFAULT ''`,
+    },
+    {
+      version: 12,
+      name: "sf-sources_note",
+      sql: `ALTER TABLE sources ADD COLUMN IF NOT EXISTS note TEXT NOT NULL DEFAULT ''`,
+    },
   ],
   { table: "signalforge_migrations" },
 );

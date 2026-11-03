@@ -15,6 +15,7 @@ import { openCommandMenu } from "@agent-native/toolkit/app/shared";
 import { AgentNativeIcon } from "@agent-native/toolkit/app/shared/AgentNativeIcon";
 import {
   IconEdit,
+  IconFlame,
   IconRadar,
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarLeftExpand,
@@ -117,7 +118,10 @@ function persistActiveThreadId(threadId: string) {
   } catch {}
 }
 
-const NAV = [{ to: "/signals", label: "Signals", Icon: IconRadar }] as const;
+const NAV = [
+  { to: "/signals", label: "Signals", Icon: IconRadar },
+  { to: "/forge", label: "Forge", Icon: IconFlame },
+] as const;
 
 function HomeNavLink({ collapsed }: { collapsed: boolean }) {
   const location = useLocation();

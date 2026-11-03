@@ -228,6 +228,21 @@ export async function collectSignals(niche: string, region: string) {
   return { signals: dedupe(all), stats };
 }
 
+/** Searches the article-style feeds for one research query. Partial failures are reported, not thrown. */
+export async function searchFeeds(q: string, region: string) {
+  const jobs: [Feed, () => Promise<RawSignal[]>][] = [
+    ["news", () => news(q, region)],
+    ["hackernews", () => hackerNews(q)],
+    ["wikipedia", () => wikipedia(q)],
+    ["bluesky", () => bluesky(q)],
+  ];
+  const settled = await Promise.allSettled(jobs.map(([, run]) => run()));
+  const rows: RawSignal[] = [];
+  const failed: string[] = [];
+  settled.forEach((r, i) => (r.status === "fulfilled" ? rows.push(...r.value.filter((s) => s.title && s.url)) : failed.push(jobs[i]![0])));
+  return { rows: dedupe(rows), failed };
+}
+
 /** Regional daily trends are mostly unrelated (sports, celebrities); keep only the ones that touch the niche. */
 function onTopic(rows: RawSignal[], niche: string): RawSignal[] {
   const words = niche.toLowerCase().split(/[^a-z0-9]+/).filter((w) => w.length > 2);

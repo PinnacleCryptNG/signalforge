@@ -4,6 +4,7 @@ import { useSetPageTitle } from "@agent-native/toolkit/app-shell";
 import { IconArrowUpRight, IconCheck, IconFlame, IconPencil, IconRadar, IconSparkles, IconX } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
 import { TAB_ID } from "@/lib/tab-id";
@@ -12,6 +13,7 @@ import { ago, type Board, type Feed, FEED_META, type Narrative, REGIONS, type Si
 
 export function SignalsScreen() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   useDbSync({ queryClient, ignoreSource: TAB_ID, realtime: { reason: "agent and user shape the same Signals board" } });
   useSetPageTitle(
     <span className="sf-display flex items-center gap-2 text-[15px] font-semibold">
@@ -69,7 +71,7 @@ export function SignalsScreen() {
   const sharpen = () =>
     scan &&
     sendToAgentChat({
-      message: `Sharpen the narratives for my "${scan.niche}" scan (${scan.id}). Read the board with get-signals-board, drop off-topic noise, and save 4-6 specific narratives with save-narratives, each backed by real signal ids.`,
+      message: `Sharpen the narratives for my "${scan.niche}" scan (${scan.id}). Read the board with get-signals-board, drop off-topic noise, and save 4-6 specific narratives with save-narratives, each backed by real signal ids. If a narrative sharpens one I picked, list the picked id in replaces.`,
       submit: true,
       openSidebar: true,
     });
@@ -178,6 +180,10 @@ export function SignalsScreen() {
                     index={i}
                     evidence={n.signalIds.map((id) => byId.get(id)).filter((s): s is Signal => !!s)}
                     onPatch={(patch) => update.mutate({ id: n.id, ...patch } as never)}
+                    onForge={() => {
+                      if (n.status !== "picked") update.mutate({ id: n.id, status: "picked" } as never);
+                      navigate(`/forge/${n.id}`);
+                    }}
                   />
                 ))}
               </div>
@@ -275,11 +281,13 @@ function NarrativeCard({
   index,
   evidence,
   onPatch,
+  onForge,
 }: {
   n: Narrative;
   index: number;
   evidence: Signal[];
   onPatch: (p: Partial<Pick<Narrative, "title" | "thesis" | "status">>) => void;
+  onForge: () => void;
 }) {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState(n.title);
@@ -361,13 +369,13 @@ function NarrativeCard({
         </button>
         <button
           type="button"
-          onClick={() => onPatch({ status: picked ? "new" : "picked" })}
+          onClick={onForge}
           className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-bold transition ${
             picked ? "bg-[hsl(var(--primary)/0.15)] text-[hsl(var(--primary))]" : "sf-molten text-[#1a0e05] hover:brightness-110"
           }`}
         >
           {picked ? <IconCheck className="size-3.5" /> : <IconFlame className="size-3.5" />}
-          {picked ? "Picked to forge" : "Forge this"}
+          {picked ? "Open in Forge" : "Forge this"}
         </button>
       </div>
     </article>

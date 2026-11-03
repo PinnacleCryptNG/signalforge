@@ -70,6 +70,8 @@ export const sources = pgTable("sources", {
   status: text("status", { enum: SOURCE_STATUSES }).notNull().default("pending"),
   decidedBy: text("decided_by", { enum: ACTORS }).notNull().default("agent"),
   addedBy: text("added_by", { enum: ACTORS }).notNull().default("agent"),
+  recommendation: text("recommendation", { enum: ["", "approve", "reject"] }).notNull().default(""),
+  note: text("note").notNull().default(""),
   updatedAt: now(),
 });
 
