@@ -4,6 +4,7 @@
 
 @import "tailwindcss";
 @import "@agent-native/toolkit/styles.css";
+@import "./components/icons/tabler-swap.css";
 
 @source "./**/*.{ts,tsx}";
 
@@ -349,7 +350,7 @@
 }
 
 .sf-display { font-family: var(--font-display); font-stretch: 118%; font-weight: 800; letter-spacing: -0.025em; }
-.sf-mono { font-family: var(--font-mono); font-size: 0.92em; letter-spacing: 0; }
+.sf-mono { font-family: var(--font-mono); font-size: 0.84em; letter-spacing: -0.01em; font-weight: 450; }
 .sf-wordmark { font-family: var(--font-display); font-stretch: 122%; font-weight: 800; letter-spacing: -0.03em; }
 .sf-wordmark-forge { background: linear-gradient(92deg, var(--sf-ember), var(--sf-gold)); -webkit-background-clip: text; background-clip: text; color: transparent; }
 
@@ -420,3 +421,83 @@
 .sf-tabbar-item.is-active { color: var(--sf-spark); --icon-accent: var(--sf-gold); }
 .sf-tabbar-item.is-active .sf-icon { color: var(--sf-ember); filter: drop-shadow(0 0 8px rgb(255 106 31 / .6)); }
 .sf-tabbar-agent-orb { display: grid; place-items: center; width: 34px; height: 24px; border-radius: 999px; background: linear-gradient(120deg, rgb(127 167 201 / .25), rgb(255 106 31 / .3)); color: var(--sf-spark); --icon-accent: var(--sf-gold); }
+
+/* ---------- The agent's bench: the chat lives on cooler steel so it reads as a separate surface ---------- */
+.agent-sidebar-panel {
+  --agent-kit-raised-surface: #11141b;
+  --agent-kit-recessed-surface: #090b10;
+  --agent-kit-subtle-surface: #151923;
+  --agent-kit-nav-surface: #0c0f15;
+  --agent-kit-composer-surface: #121620;
+  --agent-kit-composer-radius: 20px;
+  --agent-kit-composer-border-color: rgb(127 167 201 / 0.22);
+  --agent-kit-composer-focus-border-color: rgb(255 106 31 / 0.7);
+  --agent-kit-accent: #ff6a1f;
+  --agent-kit-focus: #ff6a1f;
+  --agent-kit-positive: #4fd1b5;
+  --agent-kit-success: #4fd1b5;
+  --agent-kit-danger: #ff5a4d;
+  --agent-kit-muted-text: #8d97a8;
+  --agent-kit-text: #e8ecf3;
+  --icon-accent: currentColor;
+  background:
+    radial-gradient(420px 260px at 100% 0%, rgb(127 167 201 / 0.10), transparent 70%),
+    radial-gradient(380px 240px at 0% 100%, rgb(255 106 31 / 0.08), transparent 70%),
+    #0b0d12 !important;
+  border-left: 1px solid rgb(127 167 201 / 0.16) !important;
+  box-shadow: -30px 0 60px -40px rgb(0 0 0 / .9);
+  font-family: var(--font-body);
+  position: relative;
+}
+.agent-sidebar-panel::before {
+  content: ""; position: absolute; z-index: 2; inset: 0 0 auto 0; height: 2px; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--sf-steel) 25%, var(--sf-ember) 65%, var(--sf-gold), transparent);
+  opacity: .8;
+}
+.agent-sidebar-panel .agent-sidebar-chat-header { background: transparent; border-bottom: 1px solid rgb(127 167 201 / 0.12); }
+.agent-sidebar-panel .agent-tab { font-family: var(--font-body); font-weight: 600; font-size: 12.5px; border-radius: 10px; }
+.agent-sidebar-panel .agent-tab[aria-selected="true"], .agent-sidebar-panel .agent-tab[data-active="true"] { background: rgb(127 167 201 / 0.12); color: #fff; }
+
+/* User turns: an ember-edged slip. Agent turns: open text on steel. */
+.agent-sidebar-panel .agent-sidebar-panel-inner, .agent-sidebar-panel .agent-panel-root { background: transparent !important; }
+.agentkit-chat .agentkit-message-content:has(> .agentkit-user-message-text) {
+  background: linear-gradient(160deg, rgb(255 106 31 / 0.16), rgb(255 192 92 / 0.06)) !important;
+  border: 1px solid rgb(255 106 31 / 0.32);
+  border-radius: 18px 18px 6px 18px !important;
+  color: #fff3e4;
+  box-shadow: 0 10px 30px -18px rgb(255 106 31 / .7);
+}
+.agentkit-chat .agent-markdown { font-size: 14px; line-height: 1.62; color: #dfe5ee; }
+.agentkit-chat .agent-markdown strong { color: #fff; }
+.agentkit-chat .agent-markdown code { font-family: var(--font-mono); font-size: .82em; background: rgb(127 167 201 / .12); border-radius: 6px; padding: .1em .35em; }
+.agentkit-chat .agentkit-activities-row, .agentkit-chat .agentkit-work-group-row {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: -.01em; color: #8fa7c0;
+}
+.agentkit-chat .agentkit-activities-summary .agentkit-icon, .agentkit-chat .agentkit-disclosure-icon-slot { color: var(--sf-gold); }
+
+/* Composer: a steel plate that glows when you type, with a molten send button. */
+.agentkit-chat .agent-composer-root, .agentkit-chat .agentkit-composer {
+  border-radius: 20px !important;
+  background: linear-gradient(180deg, #141924, #10131b) !important;
+  border-color: rgb(127 167 201 / 0.22) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .04), 0 16px 40px -24px rgb(0 0 0 / .9);
+  transition: border-color .2s, box-shadow .2s;
+}
+.agentkit-chat .agent-composer-root:focus-within {
+  border-color: rgb(255 106 31 / .6) !important;
+  box-shadow: 0 0 0 3px rgb(255 106 31 / .14), 0 18px 44px -22px rgb(255 106 31 / .55);
+}
+.agentkit-chat .agent-composer-send-button {
+  background: linear-gradient(135deg, var(--sf-gold), var(--sf-ember) 60%, #ff3f2a) !important;
+  color: #1a0b03 !important; border-radius: 999px !important;
+  box-shadow: 0 6px 18px -6px rgb(255 106 31 / .8);
+}
+.agentkit-chat .agent-composer-send-button:disabled { filter: grayscale(.7) brightness(.6); box-shadow: none; }
+.agentkit-chat .agent-composer-model-button { font-family: var(--font-mono); font-size: 10.5px; color: #8fa7c0; }
+.agentkit-host-suggestions-slot button {
+  border: 1px solid rgb(127 167 201 / .22) !important; background: rgb(127 167 201 / .06) !important;
+  border-radius: 14px !important; color: #dfe5ee !important; font-size: 12.5px; text-align: left;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.agentkit-host-suggestions-slot button:hover { border-color: rgb(255 106 31 / .55) !important; background: rgb(255 106 31 / .08) !important; transform: translateY(-1px); }
+@media (min-width: 768px) { .sf-tabbar { display: none; } }
