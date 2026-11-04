@@ -130,3 +130,5 @@
   [data-reveal] { opacity: 1; transform: none; transition: none; }
   .lp-btn { transition: none; }
 }
+.lp-word-means { display: block; margin-top: 2px; font-family: var(--font-sans, "DM Sans"), sans-serif; font-size: .72em; font-weight: 500; color: var(--sf-gold, #ffc05c); white-space: nowrap; }
+@media (min-width: 1081px) { .lp-words { grid-template-columns: repeat(5, minmax(0, 1fr)); } }

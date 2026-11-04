@@ -21,11 +21,11 @@ import { ago } from "../signals/format";
 import type { Brief, Draft, Platform } from "./types";
 
 export const PLATFORMS: { id: Platform; label: string; Icon: typeof IconBrandX; limit: number; title?: string; hint: string }[] = [
-  { id: "x", label: "X", Icon: IconBrandX, limit: 280, hint: "Hook post or thread. Put --- on its own line between posts." },
-  { id: "linkedin", label: "LinkedIn", Icon: IconBrandLinkedin, limit: 3000, hint: "First line earns the click. Short paragraphs." },
-  { id: "instagram", label: "Instagram", Icon: IconBrandInstagram, limit: 2200, hint: "Caption with a hook, story, CTA and hashtags." },
-  { id: "newsletter", label: "Newsletter", Icon: IconMail, limit: 6000, title: "Subject line", hint: "A short issue with sources linked inline." },
-  { id: "video", label: "Short video", Icon: IconVideo, limit: 2500, title: "Video title", hint: "45-60 s script: [HOOK], [BODY], [CTA] beats." },
+  { id: "x", label: "X", Icon: IconBrandX, limit: 280, hint: "One post or a thread. Put --- on its own line to start the next post in the thread." },
+  { id: "linkedin", label: "LinkedIn", Icon: IconBrandLinkedin, limit: 3000, hint: "The first line decides if people read on. Keep paragraphs short." },
+  { id: "instagram", label: "Instagram", Icon: IconBrandInstagram, limit: 2200, hint: "A caption with a strong first line, a short story, a closing ask and a few hashtags." },
+  { id: "newsletter", label: "Newsletter", Icon: IconMail, limit: 6000, title: "Subject line", hint: "A short email with the articles linked in the text." },
+  { id: "video", label: "Short video", Icon: IconVideo, limit: 2500, title: "Video title", hint: "A 45–60 second script: an opening line, the main part, and a closing ask." },
 ];
 export const SPEC = Object.fromEntries(PLATFORMS.map((p) => [p.id, p])) as Record<Platform, (typeof PLATFORMS)[number]>;
 const REWRITES = ["Punchier", "Shorter", "More personal", "More authoritative", "Stronger hook"];
@@ -49,7 +49,7 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
   const approveAllNow = async () => {
     for (const d of approvable) await approveAll.mutateAsync({ id: d.id, status: "approved" } as never).catch(() => undefined);
     onChanged();
-    toast(`${approvable.length} drafts approved. Schedule them below or on the Calendar.`);
+    toast(`${approvable.length} posts approved. Place them on the Calendar when you're ready.`);
   };
 
   const writeAll = () => {
@@ -61,9 +61,9 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
     <section className="mt-14">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="sf-display text-2xl font-bold">Drafts</h2>
+          <h2 className="sf-display text-2xl font-bold">Your posts</h2>
           <p className="text-sm text-muted-foreground">
-            {brief ? "One draft per platform, written from the brief. Edit in place, ask for a rewrite, approve when it's ready." : "Drafts unlock once the brief exists."}
+            {brief ? "One post for each platform. Edit the text, ask AI to rewrite it, then approve it." : "Your posts unlock once the plan is written."}
           </p>
         </div>
         {approvable.length > 1 && (
@@ -100,14 +100,14 @@ export function DraftsPanel({ narrative, brief, drafts, onChanged }: { narrative
             disabled={!picked.size}
             className="sf-molten ml-auto flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:opacity-40 max-sm:ml-0 max-sm:w-full max-sm:justify-center"
           >
-            <IconSparkles className="size-4" /> {drafts.length ? "Redraft" : "Draft"} {picked.size === PLATFORMS.length ? "all 5" : picked.size} with agent
+            <IconSparkles className="size-4" /> {drafts.length ? "Rewrite" : "Write"} {picked.size === PLATFORMS.length ? "all 5" : picked.size} with AI
           </button>
-          {editedCount > 0 && <p className="w-full text-xs text-muted-foreground">{editedCount} you edited will be kept. Ask the agent in chat to replace them.</p>}
+          {editedCount > 0 && <p className="w-full text-xs text-muted-foreground">{editedCount} you edited will be kept. Ask the AI helper if you want them replaced too.</p>}
         </div>
       )}
 
       {brief && !drafts.length && (
-        <p className="mt-5 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">No drafts yet. Pick platforms and let the agent draft them from the brief.</p>
+        <p className="mt-5 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">No posts yet. Choose platforms above and tap Write with AI.</p>
       )}
 
       {drafts.length > 0 && (
@@ -161,7 +161,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
   const approved = status !== "draft";
   const scheduleIt = useActionMutation("schedule-draft", {
     onSuccess: () => {
-      toast("On the calendar. Export it from Calendar any time.");
+      toast("Added to your Calendar.");
       onChanged();
     },
     onError: (e: unknown) => toast.error(errText(e, "Couldn't schedule it")),
@@ -220,7 +220,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
             </ul>
           ) : (
             <div className="mt-2">
-              <Meter label="chars" n={len(body)} limit={spec.limit} />
+              <Meter label="characters" n={len(body)} limit={spec.limit} />
             </div>
           )}
         </div>
@@ -229,7 +229,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
           <button
             type="button"
             disabled={over || update.isPending}
-            title={over ? "Shorten it to fit the platform first" : ""}
+            title={over ? "It's too long for this platform. Shorten it first." : ""}
             onClick={() => {
               const next = approved ? "draft" : "approved";
               setStatus(next);
@@ -239,18 +239,18 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
           >
             <IconCheck className="size-4" /> {approved ? "Approved" : "Approve"}
           </button>
-          <button type="button" onClick={copy} aria-label="Copy draft" className="rounded-lg border border-border px-3 py-2 text-muted-foreground transition hover:text-foreground">
+          <button type="button" onClick={copy} aria-label="Copy post" title="Copy the text" className="rounded-lg border border-border px-3 py-2 text-muted-foreground transition hover:text-foreground">
             <IconCopy className="size-4" />
           </button>
         </div>
         {approved && <ScheduleRow draft={draft} pending={scheduleIt.isPending} onSchedule={(iso) => scheduleIt.mutate({ id: draft.id, scheduledFor: iso } as never)} />}
         <p className="sf-label -mt-2 text-[11.5px] text-muted-foreground">
-          {draft.editedBy === "user" ? "Edited by you" : "Written by agent"} · {ago(draft.updatedAt)}
+          {draft.editedBy === "user" ? "Edited by you" : "Written by AI"} · {ago(draft.updatedAt)}
         </p>
 
         <div>
           <p className="sf-label flex items-center gap-1.5 text-[11.5px] text-muted-foreground">
-            <IconWand className="size-3.5" /> Ask for a rewrite
+            <IconWand className="size-3.5" /> Ask AI to rewrite it
           </p>
           <div className="mt-2 flex flex-wrap gap-1.5">
             {REWRITES.map((r) => (
@@ -267,7 +267,7 @@ function DraftEditor({ draft, narrativeTitle, onChanged }: { draft: Draft; narra
               setCustom("");
             }}
           >
-            <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Or say how…" className="min-w-0 flex-1 rounded-md border border-border bg-background/60 px-2.5 py-1.5 text-xs outline-none focus:border-[hsl(var(--primary))]" />
+            <input value={custom} onChange={(e) => setCustom(e.target.value)} placeholder="Or tell AI how to change it…" className="min-w-0 flex-1 rounded-md border border-border bg-background/60 px-2.5 py-1.5 text-xs outline-none focus:border-[hsl(var(--primary))]" />
             <button type="submit" disabled={!custom.trim()} className="rounded-md border border-border px-2.5 text-xs disabled:opacity-40">Go</button>
           </form>
         </div>

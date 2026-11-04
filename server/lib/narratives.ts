@@ -109,8 +109,8 @@ export function clusterSignals(niche: string, rows: RawSignal[], now = Date.now(
     const top = rows[members[0]!]!;
     out.push({
       title: headline(top.title, term),
-      thesis: `${members.length} signals from ${listFeeds(feeds)} are clustering around “${term}”${extra.length ? `, with talk of ${extra.join(", ")}` : ""}.`,
-      whyNow: `Top signal: "${top.title}"${top.publisher ? ` (${top.publisher})` : ""}.`,
+      thesis: `${members.length} posts on ${listFeeds(feeds)} are talking about “${term}”${extra.length ? `, along with ${extra.join(", ")}` : ""}.`,
+      whyNow: `Most talked-about: "${top.title}"${top.publisher ? ` (${top.publisher})` : ""}.`,
       keywords: [term, ...extra],
       members,
       momentum: members.reduce((a, i) => a + scores[i]!, 0) * (1 + 0.35 * (feeds.size - 1)),

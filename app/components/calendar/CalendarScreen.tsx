@@ -16,6 +16,7 @@ import {
 } from "@/components/icons";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState, type DragEvent } from "react";
+import { Term } from "@/components/guide/Term";
 import { Link } from "react-router";
 import { toast } from "sonner";
 
@@ -150,13 +151,13 @@ export function CalendarScreen() {
   const exportIcs = async () => {
     const res = await ics.refetch();
     const out = res.data as { filename: string; events: number; ics: string } | undefined;
-    if (!out) return toast.error(errText(res.error, "Couldn't build the .ics file"));
-    if (!out.events) return toast("Nothing scheduled yet. Put a draft on the calendar first.");
+    if (!out) return toast.error(errText(res.error, "Couldn't create the calendar file"));
+    if (!out.events) return toast("Nothing planned yet. Put a post on the calendar first.");
     const url = URL.createObjectURL(new Blob([out.ics], { type: "text/calendar" }));
     const a = Object.assign(document.createElement("a"), { href: url, download: out.filename });
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    toast(`Exported ${out.events} post${out.events === 1 ? "" : "s"} to ${out.filename}`);
+    toast(`Downloaded ${out.events} post${out.events === 1 ? "" : "s"}. Open the file to add them to your calendar.`);
   };
 
   const today = new Date();
@@ -167,9 +168,9 @@ export function CalendarScreen() {
     <div className="@container mx-auto w-full max-w-7xl px-4 pb-24 pt-6 sm:px-8">
       <header className="sf-rise flex flex-wrap items-end gap-4">
         <div className="min-w-[min(100%,22rem)] flex-1">
-          <p className="sf-label text-[12px] text-[hsl(var(--primary))]">Publishing calendar</p>
+          <p className="sf-label text-[12px] text-[hsl(var(--primary))]">Plan your week</p>
           <h1 className="sf-display mt-1 text-3xl font-bold @2xl:text-4xl">{label}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">You post, SignalForge keeps the plan. Approved drafts land here; export to any calendar app.</p>
+          <p className="mt-1 text-sm text-muted-foreground">SignalForge never posts for you. Approved posts land here: copy each one when it's time, or add them all to Google or Apple Calendar.</p>
         </div>
         <div className="flex items-center gap-2 max-sm:w-full">
           <div className="flex items-center rounded-lg border border-border">
@@ -189,14 +190,14 @@ export function CalendarScreen() {
             disabled={ics.isFetching}
             className="sf-molten flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:opacity-50 max-sm:flex-1 max-sm:justify-center"
           >
-            <IconCalendarDown className="size-4" /> Export .ics
+            <IconCalendarDown className="size-4" /> Add to my calendar
           </button>
         </div>
       </header>
 
-      <section className="sf-card sf-rise mt-6 rounded-2xl p-4 sm:p-5" aria-label="Ready to schedule">
+      <section className="sf-card sf-rise mt-6 rounded-2xl p-4 sm:p-5" aria-label="Ready to place">
         <div className="flex flex-wrap items-center gap-2">
-          <h2 className="sf-display text-lg font-bold">Ready to schedule</h2>
+          <h2 className="sf-display text-lg font-bold">Ready to place</h2>
           <span className="sf-mono rounded-full border border-border px-2 py-0.5 text-[10px] text-muted-foreground">{ready.length}</span>
           <p className="w-full text-xs text-muted-foreground @2xl:ml-auto @2xl:w-auto">
             {heldItem ? (
@@ -213,7 +214,7 @@ export function CalendarScreen() {
           <p className="mt-3 text-sm text-muted-foreground">
             {isLoading ? "Loading…" : (
               <>
-                No approved drafts waiting. Approve drafts in <Link to="/forge" className="text-[hsl(var(--primary))] underline-offset-2 hover:underline">Forge</Link> and they show up here.
+                No approved posts waiting. Approve posts in the <Link to="/forge" className="text-[hsl(var(--primary))] underline-offset-2 hover:underline">Forge</Link> and they show up here.
               </>
             )}
           </p>
@@ -277,7 +278,7 @@ export function CalendarScreen() {
                     />
                   </li>
                 ))}
-                {!items.length && !past && <li className="sf-label hidden flex-1 items-center justify-center rounded-xl border border-dashed border-border/70 text-[11.5px] text-muted-foreground/60 @4xl:flex">open</li>}
+                {!items.length && !past && <li className="sf-label hidden flex-1 items-center justify-center rounded-xl border border-dashed border-border/70 text-[11.5px] text-muted-foreground/60 @4xl:flex">free</li>}
               </ul>
             </section>
           );
@@ -346,7 +347,7 @@ function Event(props: { d: Item; editing: boolean; onEdit: () => void; onMove: (
         </form>
       )}
       <div className="-mx-1 mt-2 flex items-center gap-0.5 @4xl:justify-between">
-        <Act label={published ? "Mark not posted" : "Mark published"} onClick={props.onPublish} on={published}>
+        <Act label={published ? "Mark as not posted" : "Mark as posted"} onClick={props.onPublish} on={published}>
           <IconCheck className="size-3.5" />
         </Act>
         <Act label="Copy text" onClick={props.onCopy}>

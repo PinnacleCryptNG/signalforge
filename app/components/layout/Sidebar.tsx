@@ -120,37 +120,45 @@ function persistActiveThreadId(threadId: string) {
 }
 
 const NAV = [
-  { to: "/signals", label: "Signals", Icon: IconRadar },
-  { to: "/forge", label: "Forge", Icon: IconFlame },
-  { to: "/calendar", label: "Calendar", Icon: IconCalendarEvent },
+  { to: "/signals", label: "Signals", hint: "Find trends", Icon: IconRadar },
+  { to: "/forge", label: "Forge", hint: "Write posts", Icon: IconFlame },
+  { to: "/calendar", label: "Calendar", hint: "Plan when to post", Icon: IconCalendarEvent },
 ] as const;
 
 function HomeNavLink({ collapsed }: { collapsed: boolean }) {
   const location = useLocation();
   return (
     <div className={collapsed ? "flex flex-col items-center gap-1" : "flex flex-col gap-0.5 px-2"}>
-      {NAV.map(({ to, label, Icon }) => {
+      {NAV.map(({ to, label, hint, Icon }) => {
         const active = location.pathname.startsWith(to);
         const link = (
           <Link
             key={to}
             to={to}
             aria-current={active ? "page" : undefined}
-            aria-label={collapsed ? label : undefined}
+            aria-label={collapsed ? `${label}: ${hint}` : undefined}
+            data-tour={`nav-${label.toLowerCase()}`}
             className={cn(
               "flex items-center text-sidebar-accent-foreground transition-colors hover:bg-sidebar-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring",
               active && "sf-nav-active bg-sidebar-accent text-[hsl(var(--foreground))]",
-              collapsed ? "size-9 justify-center rounded-lg" : "sf-nav-item relative h-10 w-full gap-3 rounded-xl px-3 text-[14px] font-semibold",
+              collapsed ? "size-9 justify-center rounded-lg" : "sf-nav-item relative h-12 w-full gap-3 rounded-xl px-3 text-[14px] font-semibold",
             )}
           >
             <Icon className="size-[18px] shrink-0" strokeWidth={1.8} />
-            <span className={collapsed ? "sr-only" : "truncate"}>{label}</span>
+            {collapsed ? (
+              <span className="sr-only">{label}</span>
+            ) : (
+              <span className="flex min-w-0 flex-col leading-tight">
+                <span className="truncate">{label}</span>
+                <span className="truncate text-[11.5px] font-normal text-muted-foreground">{hint}</span>
+              </span>
+            )}
           </Link>
         );
         return collapsed ? (
           <Tooltip key={to}>
             <TooltipTrigger asChild>{link}</TooltipTrigger>
-            <TooltipContent side="right">{label}</TooltipContent>
+            <TooltipContent side="right">{label}: {hint}</TooltipContent>
           </Tooltip>
         ) : (
           link

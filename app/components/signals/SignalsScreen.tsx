@@ -9,6 +9,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import { Term } from "@/components/guide/Term";
 import { TAB_ID } from "@/lib/tab-id";
 
 import { ago, type Board, type Feed, FEED_META, type Narrative, REGIONS, type Signal, STAGE_META, SUGGESTED_NICHES } from "./format";
@@ -20,6 +21,7 @@ export function SignalsScreen() {
   useSetPageTitle(
     <span className="sf-display flex items-center gap-2 text-[15px] font-semibold">
       <IconRadar className="size-4 text-[hsl(var(--primary))]" /> Signals
+      <span className="hidden font-sans text-[13px] font-normal text-muted-foreground sm:inline">· find what's trending</span>
     </span>,
   );
 
@@ -29,6 +31,7 @@ export function SignalsScreen() {
   const [niche, setNiche] = useState("");
   const [region, setRegion] = useState<string>("US");
   const [feedFilter, setFeedFilter] = useState<Feed | "all">("all");
+  const [showWire, setShowWire] = useState(false);
 
   useEffect(() => {
     if (scan) {
@@ -54,9 +57,9 @@ export function SignalsScreen() {
   const discover = useActionMutation("discover-signals", {
     onSuccess: () => {
       void refresh();
-      toast("Scan complete. Ask the agent to sharpen the narratives.");
+      toast("Found the trending stories. Tap Autopilot on one to get your posts.");
     },
-    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "Scan failed"),
+    onError: (e: unknown) => toast.error(e instanceof Error ? e.message : "The search didn't work. Try again."),
   });
   const update = useActionMutation("update-narrative", { onSuccess: () => void refresh() });
   const autopilot = useAutopilot();
@@ -67,7 +70,7 @@ export function SignalsScreen() {
 
   const run = (n = niche) => {
     const q = n.trim();
-    if (q.length < 2) return toast("Type a niche first, like “AI agents”.");
+    if (q.length < 2) return toast("Type a topic first, like “fitness” or “AI tools”.");
     setNiche(q);
     discover.mutate({ niche: q, region } as never);
   };
@@ -85,12 +88,16 @@ export function SignalsScreen() {
         <section className="sf-rise">
           <p className="sf-label text-[12px] text-muted-foreground">
             <span className="sf-pulse-dot mr-2 inline-block size-1.5 rounded-full bg-[hsl(var(--primary))] align-middle" />
-            Live from 6 public feeds
+            Checks Google News, Reddit and 4 more free sites
           </p>
-          <h1 className="sf-display mt-3 text-4xl font-extrabold leading-[1.02] sm:text-6xl">
-            What's <span className="sf-molten-text">rising</span> in
+          <h1 className="sf-display mt-3 text-4xl font-extrabold leading-[1.05] sm:text-6xl">
+            What do you <span className="sf-molten-text">post about?</span>
           </h1>
+          <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-foreground/75">
+            Type your topic. We'll show what people are talking about right now, then write the posts for you.
+          </p>
           <form
+            data-tour="topic"
             className="mt-5 flex flex-col gap-2 sm:flex-row"
             onSubmit={(e) => {
               e.preventDefault();
@@ -100,15 +107,16 @@ export function SignalsScreen() {
             <input
               value={niche}
               onChange={(e) => setNiche(e.target.value)}
-              placeholder="your niche — e.g. fintech in Africa"
-              aria-label="Niche"
+              placeholder="e.g. fitness, crypto, football…"
+              aria-label="Your topic"
               className="sf-display h-14 min-h-14 w-full rounded-xl sm:flex-1 border border-border bg-card/80 px-5 text-xl font-semibold outline-none transition placeholder:text-muted-foreground/60 focus:border-[hsl(var(--primary))] focus:ring-4 focus:ring-[hsl(var(--primary)/0.15)]"
             />
             <div className="flex gap-2">
               <select
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                aria-label="Region"
+                aria-label="Country"
+                title="Country to search in"
                 className="sf-mono h-14 rounded-xl border border-border bg-card/80 px-3 text-sm outline-none focus:border-[hsl(var(--primary))]"
               >
                 {REGIONS.map((r) => (
@@ -121,7 +129,7 @@ export function SignalsScreen() {
                 className="sf-molten flex h-14 flex-1 items-center justify-center gap-2 rounded-xl px-7 text-base font-bold text-[#1a0e05] shadow-[0_10px_40px_-12px_#ff5a1a] transition hover:brightness-110 disabled:opacity-70 sm:flex-none"
               >
                 <IconRadar className={`size-5 ${scanning ? "animate-spin" : ""}`} />
-                {scanning ? "Scanning…" : scan ? "Rescan" : "Scan"}
+                {scanning ? "Searching…" : scan ? "Search again" : "Find trends"}
               </button>
             </div>
           </form>
@@ -143,7 +151,7 @@ export function SignalsScreen() {
 
         {scanning && <Scanning niche={niche} />}
 
-        {!scanning && isLoading && <p className="sf-mono mt-16 text-sm text-muted-foreground">Loading board…</p>}
+        {!scanning && isLoading && <p className="mt-16 text-sm text-muted-foreground">Loading…</p>}
 
         {!scanning && !isLoading && !scan && <EmptyState />}
 
@@ -152,34 +160,40 @@ export function SignalsScreen() {
             <FeedStrip stats={scan.feedStats} createdAt={scan.createdAt} />
 
             <div className="mt-10 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <h2 className="sf-display text-2xl font-bold">Narratives</h2>
+              <div className="min-w-0">
+                <h2 className="sf-display text-2xl font-bold">Trending stories</h2>
                 <p className="text-sm text-muted-foreground">
-                  The stories behind {board.signals.length} signals for “{scan.niche}”. Pick one to forge into a campaign.
+                  What people are saying about “{scan.niche}”, from {board.signals.length} posts and articles. Pick one and we'll write the posts.
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
               <button
                 type="button"
+                data-tour="autopilot"
                 onClick={() => topStory && autopilot.start(topStory)}
                 disabled={!topStory}
                 className="sf-molten flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:opacity-40"
               >
-                <IconAutopilot className="size-4" /> Autopilot the top story
+                <IconAutopilot className="size-4" /> Autopilot: write posts for the top story
               </button>
               <button
                 type="button"
                 onClick={sharpen}
                 className="flex items-center gap-2 rounded-lg border border-[hsl(var(--primary)/0.5)] bg-[hsl(var(--primary)/0.08)] px-4 py-2 text-sm font-semibold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.16)]"
               >
-                <IconSparkles className="size-4" /> Sharpen with agent
+                <IconSparkles className="size-4" /> Improve this list with AI
               </button>
               </div>
             </div>
 
+            <p className="mt-3 rounded-xl border border-border/70 bg-card/50 px-3.5 py-2.5 text-[13.5px] leading-relaxed text-foreground/80">
+              Two ways to get posts: <Term k="autopilot" className="font-semibold text-foreground" /> means the AI writes all 5 for you in about a minute.{" "}
+              <Term k="stepbystep" className="font-semibold text-foreground" /> means you check each fact first.
+            </p>
+
             {board.narratives.length === 0 ? (
               <p className="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-muted-foreground">
-                No clear narratives yet. Ask the agent to sharpen, or try a broader niche.
+                No clear stories yet. Tap “Improve this list with AI”, or try a broader topic.
               </p>
             ) : (
               <div className="mt-5 grid grid-cols-[minmax(0,1fr)] gap-4 md:grid-cols-2">
@@ -209,11 +223,23 @@ export function SignalsScreen() {
             <section className="mt-14">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h2 className="sf-display text-2xl font-bold">The wire</h2>
-                  <p className="text-sm text-muted-foreground">Every raw signal, hottest first.</p>
+                  <h2 className="sf-display text-2xl font-bold">Everything we found</h2>
+                  <p className="text-sm text-muted-foreground">All {board.signals.length} posts and articles, most talked-about first.</p>
                 </div>
+                <button
+                  type="button"
+                  aria-expanded={showWire}
+                  onClick={() => setShowWire((v) => !v)}
+                  className="rounded-lg border border-border px-3.5 py-2 text-sm font-semibold text-foreground/85 transition hover:border-[hsl(var(--primary)/0.6)]"
+                >
+                  {showWire ? "Hide" : `Show all ${board.signals.length}`}
+                </button>
+              </div>
+              {showWire && (
+              <>
+              <div className="mt-4">
                 <FilterTabs
-                  label="Filter the wire by feed"
+                  label="Filter by site"
                   value={feedFilter}
                   onChange={setFeedFilter}
                   tabs={[
@@ -227,6 +253,8 @@ export function SignalsScreen() {
                   <SignalRow key={s.id} s={s} max={board.signals[0]?.score ?? 1} />
                 ))}
               </ol>
+              </>
+              )}
             </section>
           </>
         )}
@@ -243,7 +271,7 @@ function Scanning({ niche }: { niche: string }) {
           <span key={i} style={{ animationDelay: `${(i % 14) * 0.07}s` }} />
         ))}
       </div>
-      <p className="sf-display text-xl font-semibold">Listening for “{niche}”</p>
+      <p className="sf-display text-xl font-semibold">Looking for what people say about “{niche}”…</p>
       <p className="sf-label text-xs text-muted-foreground">
         {Object.values(FEED_META).map((f) => f.tag).join(" · ")}
       </p>
@@ -255,9 +283,9 @@ function EmptyState() {
   return (
     <div className="sf-rise mt-16 grid gap-4 sm:grid-cols-3">
       {[
-        ["01", "Scan", "Six free public feeds, one niche. No accounts, no keys."],
-        ["02", "Name the narrative", "The agent groups raw signals into the stories that are rising."],
-        ["03", "Forge", "Pick one. Research it, approve sources, draft every platform."],
+        ["1", "Type your topic", "We check 6 free news and social sites. Nothing to connect."],
+        ["2", "Pick a trending story", "We group what people are saying into the stories that are growing."],
+        ["3", "Get your posts", "Tap Autopilot and the AI writes 5 posts. You read, edit and approve."],
       ].map(([k, t, d]) => (
         <div key={k} className="sf-card rounded-xl p-5">
           <p className="sf-mono text-xs text-[hsl(var(--primary))]">{k}</p>
@@ -275,7 +303,7 @@ function FeedStrip({ stats, createdAt }: { stats: Board["scan"] extends infer S 
       {stats.map((f) => (
         <span
           key={f.feed}
-          title={f.ok ? `${FEED_META[f.feed].label}: ${f.count} signals` : `${FEED_META[f.feed].label} unavailable: ${f.error ?? "error"}`}
+          title={f.ok ? `${FEED_META[f.feed].label}: ${f.count} posts and articles` : `${FEED_META[f.feed].label} didn't answer this time`}
           className={`sf-label flex items-center gap-2 rounded-md border border-border bg-card/70 px-2.5 py-1.5 text-[12px] ${f.ok && f.count ? "" : "opacity-45"}`}
         >
           <span className="size-1.5 rounded-full" style={{ background: f.ok ? FEED_META[f.feed].color : "#666" }} />
@@ -283,7 +311,7 @@ function FeedStrip({ stats, createdAt }: { stats: Board["scan"] extends infer S 
           <span className="text-muted-foreground">{f.ok ? f.count : "off"}</span>
         </span>
       ))}
-      <span className="sf-mono ml-auto text-[11px] text-muted-foreground">scanned {ago(createdAt)}</span>
+      <span className="ml-auto text-[12px] text-muted-foreground">searched {ago(createdAt)}</span>
     </div>
   );
 }
@@ -311,12 +339,13 @@ function NarrativeCard({
   const feeds = [...new Set(evidence.map((s) => s.feed))];
 
   return (
-    <article className={`sf-card sf-rise flex min-w-0 flex-col rounded-2xl p-5 ${picked ? "sf-card-picked" : ""}`} style={{ animationDelay: `${index * 70}ms` }}>
+    <article data-tour={index === 0 ? "stories" : undefined} className={`sf-card sf-rise flex min-w-0 flex-col rounded-2xl p-5 ${picked ? "sf-card-picked" : ""}`} style={{ animationDelay: `${index * 70}ms` }}>
       <div className="flex items-center justify-between gap-3">
         <span className={`sf-label rounded-full border px-2.5 py-0.5 text-xs ${stage.className}`} title={stage.hint}>
           {stage.label}
         </span>
-        <div className="flex items-center gap-2" title={`Momentum ${n.momentum}/100`}>
+        <div className="flex items-center gap-2" title={`How fast it's growing: ${n.momentum} out of 100`}>
+          <span className="text-[11.5px] text-muted-foreground">Buzz</span>
           <div className="h-1 w-16 overflow-hidden rounded-full bg-muted">
             <div className="sf-molten sf-heat h-full rounded-full transition-[width] duration-700" style={{ width: `${Math.max(6, n.momentum)}%` }} />
           </div>
@@ -342,7 +371,7 @@ function NarrativeCard({
           />
         </form>
       ) : (
-        <button type="button" onClick={() => setEditing(true)} className="group mt-3 text-left" title="Rename">
+        <button type="button" onClick={() => setEditing(true)} className="group mt-3 text-left" title="Rename this story">
           <h3 className="sf-display text-[21px] leading-[1.22]">
             {n.title}
             <IconPencil className="ml-2 inline size-3.5 text-muted-foreground opacity-0 transition group-hover:opacity-100" />
@@ -352,7 +381,7 @@ function NarrativeCard({
       {n.thesis && <p className="mt-2 text-[14.5px] leading-relaxed text-foreground/80">{n.thesis}</p>}
       {n.whyNow && (
         <p className="mt-3 rounded-xl border border-[hsl(var(--primary)/0.16)] bg-[hsl(var(--primary)/0.06)] px-3 py-2.5 text-[13.5px] leading-relaxed text-foreground/80">
-          <span className="sf-label mr-1.5 text-[hsl(var(--primary))]">Why now</span>
+          <span className="sf-label mr-1.5 text-[hsl(var(--primary))]">Why it matters now</span>
           {n.whyNow}
         </p>
       )}
@@ -361,7 +390,7 @@ function NarrativeCard({
         {evidence.slice(0, 3).map((s) => (
           <li key={s.id}>
             <a href={s.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 text-[13.5px] leading-snug text-foreground/75 hover:text-foreground">
-              <span className="sf-mono shrink-0 rounded-md border border-white/10 px-1.5 text-[10.5px] leading-[18px]" style={{ color: FEED_META[s.feed].color }}>
+              <span className="shrink-0 rounded-md border border-white/10 px-1.5 text-[11px] font-semibold leading-[18px]" style={{ color: FEED_META[s.feed].color }}>
                 {FEED_META[s.feed].tag}
               </span>
               <span className="line-clamp-1">{s.title}</span>
@@ -374,15 +403,15 @@ function NarrativeCard({
       <div className="mt-auto pt-5">
       <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">
         <span className="sf-mono mr-auto text-[11.5px] text-muted-foreground">
-          {evidence.length} signals · {feeds.length} feed{feeds.length === 1 ? "" : "s"}
+          {evidence.length} post{evidence.length === 1 ? "" : "s"} · {feeds.length} site{feeds.length === 1 ? "" : "s"}
           {n.editedBy === "user" ? " · edited by you" : ""}
         </span>
         <div className="ml-auto flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
           onClick={() => onPatch({ status: "dismissed" })}
-          aria-label="Dismiss"
-          title="Dismiss"
+          aria-label="Hide this story"
+          title="Hide this story"
           className="flex items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-[13px] font-medium text-muted-foreground transition hover:border-foreground/25 hover:text-foreground"
         >
           <IconX className="size-3.5" />
@@ -395,7 +424,7 @@ function NarrativeCard({
           }`}
         >
           {picked ? <IconCheck className="size-3.5" /> : <IconFlame className="size-3.5" />}
-          {picked ? "Open in Forge" : "Step by step"}
+          {picked ? "Open" : "Step by step"}
         </button>
         {!n.autopilot && (
           <button
@@ -417,16 +446,16 @@ function SignalRow({ s, max }: { s: Signal; max: number }) {
   const meta = FEED_META[s.feed];
   return (
     <li className="group flex items-center gap-3 px-4 py-2.5 transition hover:bg-accent/50">
-      <span className="sf-mono w-11 shrink-0 text-[11px] font-semibold" style={{ color: meta.color }}>
+      <span className="w-14 shrink-0 text-[11.5px] font-semibold" style={{ color: meta.color }}>
         {meta.tag}
       </span>
       <a href={s.url} target="_blank" rel="noreferrer" className="min-w-0 flex-1">
         <p className="truncate text-sm text-foreground/90 group-hover:text-foreground">{s.title}</p>
         <p className="sf-mono truncate text-[11px] text-muted-foreground">
-          {[s.publisher, ago(s.publishedAt), s.engagement ? `${s.engagement.toLocaleString()} engagement` : ""].filter(Boolean).join(" · ")}
+          {[s.publisher, ago(s.publishedAt), s.engagement ? `${s.engagement.toLocaleString()} likes and comments` : ""].filter(Boolean).join(" · ")}
         </p>
       </a>
-      <div className="hidden h-1 w-20 overflow-hidden rounded-full bg-muted sm:block" title={`Score ${s.score}`}>
+      <div className="hidden h-1 w-20 overflow-hidden rounded-full bg-muted sm:block" title="How much people are talking about it">
         <div className="sf-molten h-full" style={{ width: `${Math.max(4, (100 * s.score) / Math.max(1, max))}%` }} />
       </div>
     </li>

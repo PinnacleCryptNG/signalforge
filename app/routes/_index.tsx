@@ -67,11 +67,19 @@ const POINTS = [
 ];
 
 const STEPS = [
-  { Icon: IconRadar, n: "01", title: "Spot what's rising", body: "Type a niche. SignalForge scans six free live feeds and groups the noise into stories, each with a momentum score." },
-  { Icon: IconSearch, n: "02", title: "Check the facts", body: "The research agent gathers sources and recommends which to trust. You approve or reject every one." },
-  { Icon: IconFileText, n: "03", title: "Lock the angle", body: "A brief with the hook, audience and key points, citing only the sources you approved." },
-  { Icon: IconWand, n: "04", title: "Draft every platform", body: "X thread, LinkedIn, Instagram, newsletter and a video script, each within its limits. Edit or rewrite in one tap." },
-  { Icon: IconCalendarEvent, n: "05", title: "Plan the week", body: "Drop approved posts on the calendar, then copy or export to Google or Apple Calendar." },
+  { Icon: IconRadar, n: "01", title: "See what's trending", body: "Type your topic. SignalForge checks six free news and social sites and shows the stories people are talking about right now." },
+  { Icon: IconSearch, n: "02", title: "Check the facts", body: "We find articles about the story and suggest which ones to trust. Approve them yourself, or let Autopilot pick." },
+  { Icon: IconFileText, n: "03", title: "Plan the post", body: "A short plan with the main point, who it's for and the key facts, using only the articles you approved." },
+  { Icon: IconWand, n: "04", title: "Get every post", body: "X, LinkedIn, Instagram, an email newsletter and a short video script. Edit any line, or ask for a rewrite in one tap." },
+  { Icon: IconCalendarEvent, n: "05", title: "Plan the week", body: "Put approved posts on the calendar, then copy each one when it's time or add them to Google or Apple Calendar." },
+];
+
+const WORDS = [
+  { Icon: IconRadar, word: "Signals", means: "Find trends", body: "The stories people are talking about right now in your topic." },
+  { Icon: IconWand, word: "Autopilot", means: "AI does it all", body: "One tap and the AI finds the facts and writes all 5 posts. You read and approve." },
+  { Icon: IconPencil, word: "Forge", means: "Write posts", body: "Your workshop, where a story becomes finished posts you can edit." },
+  { Icon: IconFileText, word: "Plan", means: "What every post follows", body: "The main point, who it's for, the tone and the key facts." },
+  { Icon: IconCalendarEvent, word: "Calendar", means: "Plan when to post", body: "Where approved posts wait. Nothing is posted for you." },
 ];
 
 const OUTPUTS = [
@@ -112,7 +120,7 @@ export default function Landing() {
           <a href="#how">How it works</a>
           <a href="#output">Output</a>
         </nav>
-        <a className="lp-btn lp-btn--ghost lp-btn--sm" href={studio}>Open studio</a>
+        <a className="lp-btn lp-btn--ghost lp-btn--sm" href={studio}>Open the app</a>
       </header>
 
       <main>
@@ -122,23 +130,23 @@ export default function Landing() {
               Turn what's <span className="lp-hot">trending</span> into a week of <span className="lp-hot">posts.</span>
             </h1>
             <p className="lp-sub">
-              Posting every day takes hours you don't have. SignalForge finds what's rising in your niche, checks the facts and drafts posts for every platform that sound human, not generated. Ready on your calendar.
+              Posting every day takes hours. SignalForge finds what people are talking about in your topic, checks the facts and writes posts for every platform that sound like you, not a robot. You approve, then you post.
             </p>
             <div className="lp-ctas">
-              <a className="lp-btn lp-btn--hot" href={studio}>Start forging, free <IconArrowRight size={18} /></a>
+              <a className="lp-btn lp-btn--hot" href={studio}>Try it free <IconArrowRight size={18} /></a>
               <a className="lp-btn lp-btn--ghost" href="#how">See how it works</a>
             </div>
             <ul className="lp-proof">
-              <li><b>6</b> live feeds</li>
+              <li><b>6</b> free news sites</li>
               <li><b>5</b> platforms</li>
-              <li><b>0</b> auto-posts</li>
+              <li><b>0</b> posts sent without you</li>
             </ul>
           </div>
           <div className="lp-hero-visual">
             <SignalField className="lp-field" />
             <div className="lp-legend" aria-hidden>
-              <span><i className="lp-sw lp-sw--cold" />raw signals</span>
-              <span><i className="lp-sw lp-sw--hot" />forged drafts</span>
+              <span><i className="lp-sw lp-sw--cold" />what people are saying</span>
+              <span><i className="lp-sw lp-sw--hot" />your ready posts</span>
             </div>
           </div>
         </section>
@@ -233,16 +241,32 @@ export default function Landing() {
           </ol>
         </section>
 
+        <section id="words" className="lp-section">
+          <div className="lp-head" data-reveal>
+            <p className="lp-kicker">No jargon</p>
+            <h2 className="lp-h2">Five words you'll see, in plain English.</h2>
+          </div>
+          <div className="lp-points lp-words">
+            {WORDS.map(({ Icon, word, means, body }, i) => (
+              <div key={word} className="lp-panel lp-point" data-reveal style={{ transitionDelay: `${i * 60}ms` }}>
+                <span className="lp-panel-icon"><Icon size={22} /></span>
+                <h3>{word} <span className="lp-word-means">= {means}</span></h3>
+                <p>{body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section id="control" className="lp-section lp-control">
           <div className="lp-head" data-reveal>
-            <p className="lp-kicker">Human control</p>
-            <h2 className="lp-h2">The agent proposes. You decide.</h2>
+            <p className="lp-kicker">You stay in charge</p>
+            <h2 className="lp-h2">The AI suggests. You decide.</h2>
           </div>
           <div className="lp-control-grid">
             <div className="lp-panel" data-reveal>
               <span className="lp-panel-icon"><IconShieldCheck size={24} /></span>
-              <h3>Sources need your yes</h3>
-              <p>The agent recommends. Nothing counts as evidence until you approve it.</p>
+              <h3>Facts need your yes</h3>
+              <p>The AI suggests which articles to trust. Nothing is used until you approve it, or turn on Autopilot to let it choose.</p>
               <ul className="lp-sources">
                 <li className="is-ok"><IconCheck size={14} /> reuters.com · Banks restrict agent access</li>
                 <li className="is-ok"><IconCheck size={14} /> news.ycombinator.com · First-hand write-up</li>
@@ -251,13 +275,13 @@ export default function Landing() {
             </div>
             <div className="lp-panel" data-reveal>
               <span className="lp-panel-icon"><IconFileText size={24} /></span>
-              <h3>Briefs cite only what you approved</h3>
-              <p>The server refuses a brief that points at a source you haven't approved.</p>
+              <h3>Posts only use approved facts</h3>
+              <p>SignalForge won't write a plan from an article that hasn't been approved.</p>
             </div>
             <div className="lp-panel" data-reveal>
               <span className="lp-panel-icon"><IconCalendarEvent size={24} /></span>
               <h3>Nothing posts by itself</h3>
-              <p>You place approved posts on the calendar, copy them out, and post them yourself.</p>
+              <p>You put approved posts on the calendar, copy them, and post them yourself.</p>
             </div>
           </div>
         </section>
@@ -280,8 +304,8 @@ export default function Landing() {
         <section className="lp-final" data-reveal>
           <SignalForgeMark size={56} />
           <h2 className="lp-h2">Get your evenings back. Keep your voice.</h2>
-          <p className="lp-sub">Free live feeds, no setup. Type your niche and your first scan takes about two seconds.</p>
-          <a className="lp-btn lp-btn--hot" href={studio}>Start forging <IconArrowRight size={18} /></a>
+          <p className="lp-sub">Free to start, nothing to set up. Type your topic and see what's trending in about two seconds.</p>
+          <a className="lp-btn lp-btn--hot" href={studio}>Try it free <IconArrowRight size={18} /></a>
         </section>
       </main>
 

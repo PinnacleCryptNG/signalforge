@@ -38,19 +38,19 @@ export type Board = {
 };
 
 export const FEED_META: Record<Feed, { label: string; tag: string; color: string }> = {
-  news: { label: "Google News", tag: "NEWS", color: "#7cc4ff" },
+  news: { label: "Google News", tag: "News", color: "#7cc4ff" },
   hackernews: { label: "Hacker News", tag: "HN", color: "#ff8a1f" },
-  reddit: { label: "Reddit", tag: "RDT", color: "#ff5a36" },
-  bluesky: { label: "Bluesky", tag: "BSKY", color: "#5fa8ff" },
-  wikipedia: { label: "Wikipedia", tag: "WIKI", color: "#d9cbb8" },
-  trends: { label: "Google Trends", tag: "TRND", color: "#ffd166" },
+  reddit: { label: "Reddit", tag: "Reddit", color: "#ff5a36" },
+  bluesky: { label: "Bluesky", tag: "Bluesky", color: "#5fa8ff" },
+  wikipedia: { label: "Wikipedia", tag: "Wiki", color: "#d9cbb8" },
+  trends: { label: "Google Trends", tag: "Trends", color: "#ffd166" },
 };
 
 export const STAGE_META: Record<Stage, { label: string; hint: string; className: string }> = {
-  emerging: { label: "Emerging", hint: "Few signals, very recent", className: "text-[#ffd08a] border-[#ffd08a]/40" },
-  rising: { label: "Rising", hint: "Spreading across feeds", className: "text-[#ff8a1f] border-[#ff8a1f]/50" },
-  peaking: { label: "Peaking", hint: "Loud right now, act fast", className: "text-[#ff4a1a] border-[#ff4a1a]/60" },
-  cooling: { label: "Cooling", hint: "Past its peak", className: "text-[#8fa3b8] border-[#8fa3b8]/40" },
+  emerging: { label: "New", hint: "Just started, very recent", className: "text-[#ffd08a] border-[#ffd08a]/40" },
+  rising: { label: "Growing", hint: "Spreading across sites", className: "text-[#ff8a1f] border-[#ff8a1f]/50" },
+  peaking: { label: "Hot right now", hint: "Everyone is talking about it, post soon", className: "text-[#ff4a1a] border-[#ff4a1a]/60" },
+  cooling: { label: "Fading", hint: "Past its peak", className: "text-[#8fa3b8] border-[#8fa3b8]/40" },
 };
 
 export const REGIONS = ["US", "GB", "NG", "KE", "ZA", "IN", "CA", "AU", "DE", "FR", "BR"] as const;

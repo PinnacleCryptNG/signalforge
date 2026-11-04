@@ -24,7 +24,7 @@ export default createToolkitAuthPlugin({
     appName: "SignalForge",
     tagline: "Turn what's trending into a week of posts.",
     description:
-      "Spot the stories rising in your niche, approve the sources, and get drafts for X, LinkedIn, Instagram, email and video, planned on your calendar.",
+      "Type your topic, see what people are talking about, and get ready-to-post content for X, LinkedIn, Instagram, email and video. You approve everything before it goes out.",
     features: [
       "Six free live trend feeds, scanned in seconds",
       "You approve every source; briefs cite only those",

@@ -88,6 +88,7 @@ export const IconCopy = make("IconCopy", <>
   <path d="M15.5 5.5v-.2a1.8 1.8 0 0 0-1.8-1.8H5.3a1.8 1.8 0 0 0-1.8 1.8v8.4a1.8 1.8 0 0 0 1.8 1.8h.2" {...A} />
 </>);
 export const IconArrowUpRight = make("IconArrowUpRight", <><path d="M7 17 17 7" /><path d="M9 7h8v8" {...A} /></>);
+export const IconHelp = make("IconHelp", <><circle cx="12" cy="12" r="8.5" /><path d="M9.7 9.4a2.4 2.4 0 1 1 3.3 2.3c-.6.3-1 .8-1 1.5v.4" /><path d="M12 16.6v.4" {...A} /></>);
 export const IconArrowRight = make("IconArrowRight", <><path d="M4 12h15" /><path d="m13.5 6 6 6-6 6" {...A} /></>);
 export const IconChevronRight = make("IconChevronRight", <path d="m9.5 5.5 6.5 6.5-6.5 6.5" />);
 export const IconChevronLeft = make("IconChevronLeft", <path d="M14.5 5.5 8 12l6.5 6.5" />);

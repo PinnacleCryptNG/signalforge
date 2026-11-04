@@ -15,14 +15,14 @@ export function MobileTabBar({ className }: { className?: string }) {
   return (
     <nav aria-label="Primary" className={cn("sf-tabbar", className)}>
       {TABS.map(({ to, label, Icon }) => (
-        <NavLink key={to} to={to} className={({ isActive }) => cn("sf-tabbar-item", isActive && "is-active")}>
+        <NavLink key={to} to={to} data-tour={`nav-${label.toLowerCase()}`} className={({ isActive }) => cn("sf-tabbar-item", isActive && "is-active")}>
           <Icon size={22} />
           <span>{label}</span>
         </NavLink>
       ))}
-      <button type="button" className="sf-tabbar-item sf-tabbar-agent" onClick={() => focusAgentChat()}>
+      <button type="button" data-tour="agent" className="sf-tabbar-item sf-tabbar-agent" onClick={() => focusAgentChat()}>
         <span className="sf-tabbar-agent-orb"><IconSparkles size={20} /></span>
-        <span>Agent</span>
+        <span>AI help</span>
       </button>
     </nav>
   );

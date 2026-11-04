@@ -23,6 +23,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { toast } from "sonner";
 
+import { Term } from "@/components/guide/Term";
 import { TAB_ID } from "@/lib/tab-id";
 
 import { ago, STAGE_META } from "../signals/format";
@@ -38,6 +39,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
   useSetPageTitle(
     <span className="sf-display flex items-center gap-2 text-[15px] font-semibold">
       <IconFlame className="size-4 text-[hsl(var(--primary))]" /> Forge
+      <span className="hidden font-sans text-[13px] font-normal text-muted-foreground sm:inline">· write your posts</span>
     </span>,
   );
 
@@ -66,14 +68,14 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
     onSuccess: (r: unknown) => {
       void refresh();
       const res = r as { added: number; failedFeeds: string[] };
-      toast(res.added ? `${res.added} sources found. Approve the ones you trust.` : "No new sources this time. Try the agent for a deeper search.");
+      toast(res.added ? `${res.added} articles found. Approve the ones you trust.` : "No new articles this time. Try “Let AI check them” for a deeper search.");
     },
-    onError: (e: unknown) => toast.error(errText(e, "Research failed")),
+    onError: (e: unknown) => toast.error(errText(e, "Couldn't find articles. Try again.")),
   });
   const unpick = useActionMutation("update-narrative", { onSuccess: () => void refresh() });
   const autopilot = useAutopilot();
 
-  if (isLoading) return <Shell><p className="sf-mono mt-16 text-sm text-muted-foreground">Heating the forge…</p></Shell>;
+  if (isLoading) return <Shell><p className="mt-16 text-sm text-muted-foreground">Loading…</p></Shell>;
   if (!forge?.queue.length || !sel || !n) return <Shell><EmptyForge /></Shell>;
 
   const approved = sel.sources.filter((s) => s.status === "approved");
@@ -96,7 +98,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
               <div className="flex min-w-0 flex-1 flex-wrap items-center gap-x-3 gap-y-2">
                 <span className={`sf-label rounded border px-2 py-0.5 text-[11.5px] ${stage.className}`}>{stage.label}</span>
                 <span className="sf-label min-w-0 text-[12px] text-muted-foreground">
-                  {sel.niche} · {sel.region} · momentum {n.momentum}
+                  {sel.niche} · {sel.region} · buzz {n.momentum}/100
                 </span>
               </div>
               <button
@@ -105,16 +107,17 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
                   unpick.mutate({ id: n.id, status: "new" } as never);
                   navigate("/forge");
                 }}
-                className="sf-mono shrink-0 rounded-md border border-border px-2.5 py-1 text-[11px] text-muted-foreground transition hover:border-foreground/30 hover:text-foreground"
+                title="Take this story out of the Forge"
+                className="shrink-0 rounded-md border border-border px-2.5 py-1 text-[12px] text-muted-foreground transition hover:border-foreground/30 hover:text-foreground"
               >
-                Unpick
+                Remove
               </button>
             </div>
             <h1 className="sf-display mt-3 text-3xl font-extrabold leading-[1.05] @2xl:text-5xl">{n.title}</h1>
             {n.thesis && <p className="mt-3 max-w-3xl text-base leading-relaxed text-foreground/80">{n.thesis}</p>}
             {n.whyNow && (
               <p className="mt-2 max-w-3xl text-sm text-muted-foreground">
-                <span className="sf-label mr-1.5 text-[11.5px] text-[hsl(var(--primary))]">Why now</span>
+                <span className="sf-label mr-1.5 text-[11.5px] text-[hsl(var(--primary))]">Why it matters now</span>
                 {n.whyNow}
               </p>
             )}
@@ -132,6 +135,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
           <SourcesPanel
             narrativeId={n.id}
             sources={sel.sources}
+            autopilot={!!n.autopilot}
             researching={research.isPending}
             onQuick={() => research.mutate({ narrativeId: n.id } as never)}
             onAgent={agentResearch}
@@ -155,13 +159,13 @@ function AutopilotBar({ on, done, pending, onStart, onRerun, onStop }: { on: boo
         <IconAutopilot className="size-5" />
       </div>
       <div className="min-w-0 flex-1 basis-56">
-        <p className="text-[15px] font-semibold">{on ? "Autopilot is on" : "Let the agent do the work"}</p>
+        <p className="text-[15px] font-semibold">{on ? (done ? "Your posts are ready" : "Autopilot is writing your posts") : <>Let AI do it all with <Term k="autopilot" /></>}</p>
         <p className="text-[13px] leading-snug text-muted-foreground">
           {on
             ? done
-              ? "Drafts are ready below. Read them and approve the ones you like. Run again for a fresh set."
-              : "The agent is picking sources, writing the brief and drafting all 5 posts. You'll only need to approve the drafts."
-            : "Autopilot picks the sources, writes the brief and drafts all 5 posts. You just approve the drafts. Prefer to check each source? Use the steps below."}
+              ? "Scroll down to read them and approve the ones you like. Tap Run again for a fresh set."
+              : "The AI is finding facts, planning the posts and writing all 5. This takes about a minute. Watch it work in the AI helper panel."
+            : "The AI finds the facts, plans the posts and writes all 5 for you. You just read and approve. Prefer to check each fact yourself? Use the steps below."}
         </p>
       </div>
       <div className="flex shrink-0 flex-wrap gap-2 max-sm:w-full">
@@ -208,10 +212,10 @@ function EmptyForge() {
       <div className="sf-molten mx-auto flex size-14 items-center justify-center rounded-2xl shadow-[0_10px_40px_-12px_#ff5a1a]">
         <IconFlame className="size-7 text-[#1a0e05]" />
       </div>
-      <h1 className="sf-display mt-5 text-3xl font-extrabold">Nothing on the anvil</h1>
-      <p className="mt-2 text-muted-foreground">Pick a narrative on the Signals board and it lands here for research, source approval and a brief.</p>
+      <h1 className="sf-display mt-5 text-3xl font-extrabold">No story picked yet</h1>
+      <p className="mt-2 text-muted-foreground">The <Term k="forge" /> is where your posts get written. Pick a trending story on Signals and it lands here.</p>
       <Link to="/signals" className="sf-molten mt-6 inline-flex items-center gap-2 rounded-xl px-6 py-3 font-bold text-[#1a0e05]">
-        <IconRadar className="size-5" /> Go to Signals
+        <IconRadar className="size-5" /> Find a trending story
       </Link>
     </div>
   );
@@ -220,7 +224,7 @@ function EmptyForge() {
 function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string }) {
   return (
     <aside className="min-w-0 xl:sticky xl:top-6 xl:self-start">
-      <p className="sf-label text-[12px] text-muted-foreground">On the anvil · {queue.length}</p>
+      <p className="sf-label text-[12px] text-muted-foreground">Your stories · {queue.length}</p>
       <nav className="mt-3 flex gap-2 overflow-x-auto pb-1 xl:flex-col xl:overflow-visible">
         {queue.map((q) => {
           const active = q.id === activeId;
@@ -233,16 +237,16 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
               <p className="line-clamp-2 text-sm font-semibold leading-snug">{q.title}</p>
               <div className="sf-label mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 whitespace-nowrap text-[11px] text-muted-foreground">
                 <span className={q.approved ? "text-[hsl(var(--primary))]" : ""}>
-                  {q.approved}/{q.sources} src
+                  {q.approved}/{q.sources} sources
                 </span>
                 <span className={q.hasBrief ? "text-[hsl(var(--primary))]" : ""}>
                   <span className="mr-1.5 text-muted-foreground">·</span>
-                  {q.hasBrief ? "brief ✓" : "no brief"}
+                  {q.hasBrief ? "plan ✓" : "no plan yet"}
                 </span>
                 {q.drafts > 0 && (
                   <span className="text-[hsl(var(--primary))]">
                     <span className="mr-1.5 text-muted-foreground">·</span>
-                    {q.drafts} drafts
+                    {q.drafts} posts
                   </span>
                 )}
               </div>
@@ -255,10 +259,10 @@ function Queue({ queue, activeId }: { queue: Forge["queue"]; activeId: string })
 }
 
 const STEPS = [
-  { label: "Research", short: "Research" },
-  { label: "Approve sources", short: "Sources" },
-  { label: "Brief", short: "Brief" },
-  { label: "Drafts", short: "Drafts" },
+  { label: "Find facts", short: "Facts" },
+  { label: "Check facts", short: "Check" },
+  { label: "Plan", short: "Plan" },
+  { label: "Posts", short: "Posts" },
 ];
 function Steps({ step }: { step: number }) {
   return (
@@ -288,6 +292,7 @@ function Steps({ step }: { step: number }) {
 function SourcesPanel({
   narrativeId,
   sources: serverSources,
+  autopilot,
   researching,
   onQuick,
   onAgent,
@@ -295,6 +300,7 @@ function SourcesPanel({
 }: {
   narrativeId: string;
   sources: Source[];
+  autopilot: boolean;
   researching: boolean;
   onQuick: () => void;
   onAgent: () => void;
@@ -308,6 +314,8 @@ function SourcesPanel({
     [serverSources, optimistic],
   );
   const [url, setUrl] = useState("");
+  const [open, setOpen] = useState(!autopilot);
+  useEffect(() => setOpen(!autopilot), [autopilot, narrativeId]);
   const review = useActionMutation("review-source", {
     onSuccess: onChanged,
     onError: (e: unknown) => {
@@ -346,10 +354,24 @@ function SourcesPanel({
     <section className="mt-12">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="sf-display text-2xl font-bold">Sources</h2>
-          <p className="text-sm text-muted-foreground">Only sources you approve can be cited in the brief.</p>
+          <h2 className="sf-display text-2xl font-bold">Facts &amp; <Term k="sources">sources</Term></h2>
+          <p className="text-sm text-muted-foreground">
+            {autopilot ? `Autopilot picked ${counts.approved} of ${counts.all} articles to base your posts on.` : "Articles about this story. Approve the ones you trust; only those are used in your posts."}
+          </p>
         </div>
         <div className="flex flex-wrap gap-2">
+          {autopilot && sources.length > 0 && (
+            <button
+              type="button"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="rounded-lg border border-border px-3.5 py-2 text-sm font-semibold text-foreground/85 transition hover:border-[hsl(var(--primary)/0.6)]"
+            >
+              {open ? "Hide articles" : `Show ${counts.all} articles`}
+            </button>
+          )}
+          {(open || !sources.length) && (
+          <>
           <button
             type="button"
             onClick={onQuick}
@@ -357,15 +379,17 @@ function SourcesPanel({
             className="flex items-center gap-2 rounded-lg border border-border px-3.5 py-2 text-sm font-semibold text-foreground/85 transition hover:border-[hsl(var(--primary)/0.6)] disabled:opacity-60"
           >
             {researching ? <IconLoader2 className="size-4 animate-spin" /> : <IconSearch className="size-4" />}
-            {researching ? "Reading pages…" : sources.length ? "Find more" : "Quick research"}
+            {researching ? "Reading articles…" : sources.length ? "Find more" : "Find articles"}
           </button>
           <button
             type="button"
             onClick={onAgent}
             className="flex items-center gap-2 rounded-lg border border-[hsl(var(--primary)/0.5)] bg-[hsl(var(--primary)/0.08)] px-3.5 py-2 text-sm font-semibold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.16)]"
           >
-            <IconSparkles className="size-4" /> Research with agent
+            <IconSparkles className="size-4" /> Let AI check them
           </button>
+          </>
+          )}
         </div>
       </div>
 
@@ -376,11 +400,11 @@ function SourcesPanel({
               <span key={i} style={{ animationDelay: `${i * 0.07}s` }} />
             ))}
           </div>
-          <p className="text-sm text-muted-foreground">Searching four feeds and reading each page…</p>
+          <p className="text-sm text-muted-foreground">Searching 4 free sites and reading each article…</p>
         </div>
       )}
 
-      {sources.length > 0 && (
+      {open && sources.length > 0 && (
         <div className="mt-5 flex flex-wrap items-center gap-1.5">
           <FilterTabs
             label="Filter sources by status"
@@ -388,7 +412,7 @@ function SourcesPanel({
             onChange={setFilter}
             tabs={[
               { id: "all" as const, label: "All", count: counts.all },
-              { id: "pending" as const, label: "Pending", count: counts.pending },
+              { id: "pending" as const, label: "To check", count: counts.pending },
               { id: "approved" as const, label: "Approved", count: counts.approved, Icon: IconCheck },
               { id: "rejected" as const, label: "Rejected", count: counts.rejected, Icon: IconX },
             ]}
@@ -400,7 +424,7 @@ function SourcesPanel({
               onClick={() => decide(flagged.map((s) => s.id), "reject")}
               className="flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-muted-foreground transition hover:text-foreground"
             >
-              <IconX className="size-3.5" /> Reject {flagged.length} it flags
+              <IconX className="size-3.5" /> Reject the {flagged.length} AI flagged
             </button>
           )}
           {recommended.length > 0 && (
@@ -409,7 +433,7 @@ function SourcesPanel({
               onClick={() => decide(recommended.map((s) => s.id), "approve")}
               className="flex items-center gap-1.5 rounded-md bg-[hsl(var(--primary)/0.15)] px-3 py-1.5 text-xs font-bold text-[hsl(var(--primary))] transition hover:bg-[hsl(var(--primary)/0.25)]"
             >
-              <IconCheck className="size-3.5" /> Approve {recommended.length} the agent recommends
+              <IconCheck className="size-3.5" /> Approve the {recommended.length} AI picked
             </button>
           )}
         </div>
@@ -417,10 +441,12 @@ function SourcesPanel({
 
       {!sources.length && !researching && (
         <p className="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
-          No sources yet. Quick research pulls them from free feeds in a few seconds; the agent also vets each one.
+          No articles yet. Tap Find articles and we'll pull some from free news sites in a few seconds.
         </p>
       )}
 
+      {open && (
+      <>
       <ul className="mt-4 grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))]">
         {shown.map((s, i) => (
           <SourceCard key={s.id} s={s} index={i} onDecide={(d) => decide([s.id], d)} />
@@ -441,8 +467,8 @@ function SourcesPanel({
           <input
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Add your own source link"
-            aria-label="Source link"
+            placeholder="Have your own article? Paste its link"
+            aria-label="Article link"
             inputMode="url"
             className="h-11 w-full rounded-lg border border-border bg-card/70 pl-9 pr-3 text-sm outline-none transition focus:border-[hsl(var(--primary))]"
           />
@@ -455,6 +481,8 @@ function SourcesPanel({
           {add.isPending ? <IconLoader2 className="size-4 animate-spin" /> : <IconPlus className="size-4" />} Add
         </button>
       </form>
+      </>
+      )}
     </section>
   );
 }
@@ -477,14 +505,14 @@ function SourceCard({ s, index, onDecide }: { s: Source; index: number; onDecide
       {s.recommendation && s.status === "pending" && (
         <p className={`mt-3 rounded-md px-2.5 py-1.5 text-xs ${s.recommendation === "approve" ? "bg-[hsl(var(--primary)/0.1)] text-[hsl(var(--primary))]" : "bg-muted text-muted-foreground"}`}>
           <IconSparkles className="mr-1 inline size-3" />
-          Agent suggests {s.recommendation}
+          {s.recommendation === "approve" ? "AI says: use it" : "AI says: skip it"}
           {s.note ? `: ${s.note}` : ""}
         </p>
       )}
       <div className="mt-auto pt-4">
       <div className="flex flex-wrap items-center gap-x-2 gap-y-2 border-t border-border/60 pt-3">
         <span className="sf-label mr-auto whitespace-nowrap text-[12px] text-muted-foreground first-letter:uppercase">
-          {s.status === "pending" ? "Needs your call" : `${s.status} by ${s.decidedBy === "user" ? "you" : "agent"}`}
+          {s.status === "pending" ? "Your call" : `${s.status} by ${s.decidedBy === "user" ? "you" : "AI"}`}
         </span>
         <div className="ml-auto flex items-center gap-1.5">
         {s.status !== "pending" && (
@@ -547,27 +575,27 @@ function BriefPanel({
     <section className="mt-14">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="sf-display text-2xl font-bold">Brief</h2>
+          <h2 className="sf-display text-2xl font-bold">Post <Term k="brief">plan</Term></h2>
           <p className="text-sm text-muted-foreground">
-            {brief ? `Written by ${brief.editedBy === "user" ? "you" : "the agent"} · ${ago(brief.updatedAt)}. Click any field to edit.` : "The angle, audience and points every draft will follow."}
+            {brief ? `Written by ${brief.editedBy === "user" ? "you" : "AI"} · ${ago(brief.updatedAt)}. Tap any field to edit it.` : "The main point, audience and key facts every post will follow."}
           </p>
         </div>
         <button
           type="button"
           onClick={onAgent}
           disabled={!approved.length}
-          title={approved.length ? "" : "Approve at least one source first"}
+          title={approved.length ? "" : "Approve at least one article first"}
           className="sf-molten flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold text-[#1a0e05] shadow-[0_10px_30px_-14px_#ff5a1a] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none"
         >
-          <IconFileText className="size-4" /> {brief ? "Rewrite with agent" : "Write brief with agent"}
+          <IconFileText className="size-4" /> {brief ? "Rewrite with AI" : "Write the plan with AI"}
         </button>
       </div>
 
       {!brief && (
         <p className="mt-6 rounded-xl border border-dashed border-border p-8 text-center text-sm text-muted-foreground">
           {approved.length
-            ? `${approved.length} approved source${approved.length === 1 ? "" : "s"} ready. Ask the agent to write the brief from them.`
-            : "Approve at least one source to unlock the brief."}
+            ? `${approved.length} approved article${approved.length === 1 ? "" : "s"} ready. Tap “Write the plan with AI”.`
+            : "Approve at least one article above to unlock the plan."}
         </p>
       )}
 
@@ -575,16 +603,16 @@ function BriefPanel({
         <div className="sf-card sf-rise @container mt-5 rounded-2xl p-5 sm:p-7">
           {brief.unapprovedCitations.length > 0 && (
             <p className="mb-4 rounded-md bg-[#ff4a1a]/10 px-3 py-2 text-xs text-[#ff8a5c]">
-              {brief.unapprovedCitations.length} cited source{brief.unapprovedCitations.length === 1 ? " is" : "s are"} no longer approved. Rewrite or edit the points that use them.
+              {brief.unapprovedCitations.length} article{brief.unapprovedCitations.length === 1 ? " used here is" : "s used here are"} no longer approved. Rewrite or edit the facts that use them.
             </p>
           )}
-          <Field label="Angle" value={brief.angle} big onSave={(v) => patch({ angle: v })} />
+          <Field label="Main point" value={brief.angle} big onSave={(v) => patch({ angle: v })} />
           <div className="mt-5 grid gap-5 @xl:grid-cols-3">
-            <Field label="Audience" value={brief.audience} onSave={(v) => patch({ audience: v })} />
-            <Field label="Tone" value={brief.tone} onSave={(v) => patch({ tone: v })} />
-            <Field label="Call to action" value={brief.cta} onSave={(v) => patch({ cta: v })} />
+            <Field label="Who it's for" value={brief.audience} onSave={(v) => patch({ audience: v })} />
+            <Field label="Tone of voice" value={brief.tone} onSave={(v) => patch({ tone: v })} />
+            <Field label="What readers should do" value={brief.cta} onSave={(v) => patch({ cta: v })} />
           </div>
-          <p className="sf-label mt-7 text-[11.5px] text-[hsl(var(--primary))]">Key points</p>
+          <p className="sf-label mt-7 text-[11.5px] text-[hsl(var(--primary))]">Key facts</p>
           <ol className="mt-3 space-y-3">
             {brief.keyPoints.map((k, i) => (
               <KeyPointRow
@@ -612,7 +640,7 @@ function Field({ label, value, big, onSave }: { label: string; value: string; bi
       <textarea
         value={v}
         onChange={(e) => setV(e.target.value)}
-        onBlur={() => v.trim() !== value && v.trim().length >= (label === "Angle" ? 3 : 0) && onSave(v.trim())}
+        onBlur={() => v.trim() !== value && v.trim().length >= (big ? 3 : 0) && onSave(v.trim())}
         placeholder="—"
         className={`-mx-1.5 mt-1 min-h-9 w-[calc(100%+0.75rem)] resize-none rounded-md [field-sizing:content] border border-transparent bg-transparent px-1.5 py-1 outline-none transition hover:border-border focus:border-[hsl(var(--primary))] focus:bg-background/60 ${
           big ? "sf-display text-lg font-bold leading-snug @lg:text-xl @2xl:text-2xl" : "text-sm leading-relaxed"
@@ -663,15 +691,15 @@ function KeyPointRow({
               </a>
             ) : (
               <span key={id} className="sf-mono rounded border border-[#ff4a1a]/40 px-1.5 py-0.5 text-[10px] text-[#ff8a5c]">
-                unapproved source
+                not approved
               </span>
             );
           })}
-          {!k.sourceIds.length && <span className="sf-mono text-[10px] text-muted-foreground/70">no citation</span>}
+          {!k.sourceIds.length && <span className="sf-mono text-[10px] text-muted-foreground/70">no source</span>}
         </div>
       </div>
       {onRemove && (
-        <button type="button" onClick={onRemove} aria-label="Remove point" className="mt-1 self-start text-muted-foreground opacity-0 transition hover:text-foreground group-hover:opacity-100 max-sm:opacity-60">
+        <button type="button" onClick={onRemove} aria-label="Remove this fact" className="mt-1 self-start text-muted-foreground opacity-0 transition hover:text-foreground group-hover:opacity-100 max-sm:opacity-60">
           <IconTrash className="size-4" />
         </button>
       )}

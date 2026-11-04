@@ -35,12 +35,12 @@ export function AgentInspector({
       browserTabId={TAB_ID}
       openOnChatRunning={chatHomeHandoffActive}
       onFullscreenRequest={openAskAgentFullscreen}
-      emptyStateText="Your forge hand. Press Autopilot on any story and it researches, picks sources and drafts every post. You approve what goes out."
+      emptyStateText="Your AI helper. Ask in plain words, like “write posts about today's top story”. Press Autopilot on any story and it does the whole job. You approve what goes out."
       agentPageHref="/settings/agent"
       suggestions={[
-        "Scan what's rising in AI agents this week",
-        "Research my picked narrative and recommend sources",
-        "Draft an X thread and a LinkedIn post from my brief",
+        "Find what's trending in fitness this week",
+        "Check the facts for the story I picked",
+        "Write an X post and a LinkedIn post from my plan",
       ]}
     >
       {children}
