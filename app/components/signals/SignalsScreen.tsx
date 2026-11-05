@@ -332,6 +332,7 @@ function NarrativeCard({
   onAutopilot: () => void;
 }) {
   const [editing, setEditing] = useState(false);
+  const [showEvidence, setShowEvidence] = useState(false);
   const [title, setTitle] = useState(n.title);
   useEffect(() => setTitle(n.title), [n.title]);
   const stage = STAGE_META[n.stage];
@@ -386,10 +387,15 @@ function NarrativeCard({
         </p>
       )}
 
-      <details className="mt-3">
-      <summary className="cursor-pointer select-none text-[13px] text-muted-foreground transition hover:text-foreground">
-        See the {evidence.length} post{evidence.length === 1 ? "" : "s"} behind this story
-      </summary>
+      <button
+        type="button"
+        aria-expanded={showEvidence}
+        onClick={() => setShowEvidence((v) => !v)}
+        className="mt-3 self-start text-left text-[13px] text-muted-foreground transition hover:text-foreground"
+      >
+        {showEvidence ? "Hide the posts" : `See the ${evidence.length} post${evidence.length === 1 ? "" : "s"} behind this story`}
+      </button>
+      {showEvidence && (
       <ul className="mt-3 space-y-2">
         {evidence.slice(0, 3).map((s) => (
           <li key={s.id}>
@@ -403,7 +409,7 @@ function NarrativeCard({
           </li>
         ))}
       </ul>
-      </details>
+      )}
 
       <div className="mt-auto pt-5">
       <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">

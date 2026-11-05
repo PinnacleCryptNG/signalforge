@@ -1,7 +1,7 @@
 {
   "name": "SignalForge",
   "short_name": "SignalForge",
-  "description": "Turn what's trending into a week of posts. Content takes hours: SignalForge finds the story, checks the facts and drafts posts that sound human.",
+  "description": "Create 5 pieces of content on social media in 10 minutes. SignalForge finds what people are talking about in your topic, checks the facts and writes posts that sound like you, not AI slop.",
   "start_url": "./signals",
   "display": "standalone",
   "background_color": "#0B0A0D",

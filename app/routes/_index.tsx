@@ -28,7 +28,7 @@ import "@/components/landing/landing.css";
 const TITLE = "SignalForge · Create 5 pieces of content on social media in 10 minutes";
 const DESC =
   "Content takes hours you don't have. Type your topic and SignalForge finds what people are talking about, checks the facts and writes 5 posts for X, LinkedIn, Instagram, email and video that sound like you, not AI slop.";
-const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=3";
+const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=4";
 
 export function meta() {
   return [
