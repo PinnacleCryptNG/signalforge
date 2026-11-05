@@ -25,9 +25,9 @@ import { SignalForgeMark, SignalForgeWordmark } from "@/components/landing/Logo"
 import { SignalField } from "@/components/landing/SignalField";
 import "@/components/landing/landing.css";
 
-const TITLE = "SignalForge · Turn what's trending into a week of posts";
+const TITLE = "SignalForge · Create 5 pieces of content on social media in 10 minutes";
 const DESC =
-  "Content takes hours you don't have. SignalForge finds what's rising in your niche, checks the facts with sources you approve, and drafts human-sounding posts for X, LinkedIn, Instagram, email and video, planned on your calendar.";
+  "Content takes hours you don't have. Type your topic and SignalForge finds what people are talking about, checks the facts and writes 5 posts for X, LinkedIn, Instagram, email and video that sound like you, not AI slop.";
 const OG_IMAGE = "https://signalforge-agent.vercel.app/og.jpg?v=3";
 
 export function meta() {
@@ -42,7 +42,7 @@ export function meta() {
     { property: "og:image:type", content: "image/jpeg" },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
-    { property: "og:image:alt", content: "SignalForge: turn what's trending into a week of posts" },
+    { property: "og:image:alt", content: "SignalForge: create 5 pieces of content on social media in 10 minutes" },
     { name: "twitter:card", content: "summary_large_image" },
     { name: "twitter:image", content: OG_IMAGE },
     { name: "twitter:title", content: TITLE },
@@ -51,27 +51,25 @@ export function meta() {
 }
 
 const PAINS = [
-  { Icon: IconSearch, title: "Finding something to say", body: "An hour of scrolling to find a topic, only to see ten people already posted it." },
-  { Icon: IconShieldCheck, title: "Making sure it's true", body: "Tab after tab to check a claim before you put your name on it." },
-  { Icon: IconFileText, title: "Writing it five times", body: "A thread for X, a post for LinkedIn, a caption, a newsletter, a script. Each with its own rules." },
-  { Icon: IconClock, title: "Doing it all again tomorrow", body: "Consistency is what grows an account, and a busy week is the first thing that breaks the streak." },
+  { Icon: IconSearch, title: "Finding something to say", body: "An hour of scrolling to find a topic, then tab after tab checking the facts before you put your name on it." },
+  { Icon: IconPencil, title: "Staring at a blank page", body: "Not everyone is a natural writer. Turning an idea into a post people actually stop for is hard work." },
+  { Icon: IconFileText, title: "Writing it five times", body: "A thread for X, a post for LinkedIn, a caption, a newsletter, a video script. Each one with its own rules." },
+  { Icon: IconClock, title: "Doing it all again tomorrow", body: "Growth needs you to show up every day, and a busy week is the first thing that breaks the streak." },
 ];
 
 const FAST_HABITS = ["They show up every single day", "They're early on the story", "They have a specific angle", "They fit each platform's format"];
 
 const POINTS = [
-  { Icon: IconRadar, title: "Built on real stories", body: "Every draft starts from a live story and the sources you approved, so it carries names, facts and specifics instead of filler." },
-  { Icon: IconPencil, title: "Your angle, set first", body: "You lock the hook, audience and tone in a brief before a single word is drafted." },
-  { Icon: IconWand, title: "Native to each platform", body: "A real X thread, a LinkedIn post with room to breathe, a caption, a newsletter, a video script. Not one text resized five times." },
-  { Icon: IconEdit, title: "You have the last word", body: "Edit any line, or tap More personal, Punchier or Shorter. The agent is told to skip buzzwords, emoji walls and hashtag stuffing." },
+  { Icon: IconRadar, title: "Built on real stories", body: "Every post starts from a story people are talking about today and the articles you approved, so it has names, facts and details instead of filler." },
+  { Icon: IconPencil, title: "Your angle, set first", body: "The main point, who it's for and the tone are set in a short plan before a single word is written." },
+  { Icon: IconWand, title: "Native to each platform", body: "A real X thread, a LinkedIn post, an Instagram caption, a newsletter and a video script. Not one text copied five times." },
+  { Icon: IconEdit, title: "You have the last word", body: "Edit any line, or tap More personal, Punchier or Shorter. The AI is told to skip buzzwords, emoji walls and hashtag stuffing." },
 ];
 
 const STEPS = [
-  { Icon: IconRadar, n: "01", title: "See what's trending", body: "Type your topic. SignalForge checks six free news and social sites and shows the stories people are talking about right now." },
-  { Icon: IconSearch, n: "02", title: "Check the facts", body: "We find articles about the story and suggest which ones to trust. Approve them yourself, or let Autopilot pick." },
-  { Icon: IconFileText, n: "03", title: "Plan the post", body: "A short plan with the main point, who it's for and the key facts, using only the articles you approved." },
-  { Icon: IconWand, n: "04", title: "Get every post", body: "X, LinkedIn, Instagram, an email newsletter and a short video script. Edit any line, or ask for a rewrite in one tap." },
-  { Icon: IconCalendarEvent, n: "05", title: "Plan the week", body: "Put approved posts on the calendar, then copy each one when it's time or add them to Google or Apple Calendar." },
+  { Icon: IconRadar, n: "30 sec", title: "1. Type your topic", body: "Fitness, crypto, football, anything. SignalForge shows the stories people are talking about right now." },
+  { Icon: IconWand, n: "1 min", title: "2. Tap Autopilot", body: "The AI checks the facts and writes 5 posts: an X thread, a LinkedIn post, an Instagram caption, a newsletter and a video script." },
+  { Icon: IconCalendarEvent, n: "5–8 min", title: "3. Read, tweak, post", body: "Change any line or tap “Shorter” or “More personal”. Approve, put them on your calendar, and post when you're ready." },
 ];
 
 const WORDS = [
@@ -127,19 +125,19 @@ export default function Landing() {
         <section className="lp-hero">
           <div className="lp-hero-copy">
             <h1 className="lp-h1">
-              Turn what's <span className="lp-hot">trending</span> into a week of <span className="lp-hot">posts.</span>
+              Create <span className="lp-hot">5 pieces of content</span> on social media in <span className="lp-hot">10 minutes.</span>
             </h1>
             <p className="lp-sub">
-              Posting every day takes hours. SignalForge finds what people are talking about in your topic, checks the facts and writes posts for every platform that sound like you, not a robot. You approve, then you post.
+              You know you should post every day. But finding a topic, checking the facts and writing it five different ways takes hours you don't have, and it's even harder if writing isn't your thing. SignalForge does that work for you, in your voice.
             </p>
             <div className="lp-ctas">
               <a className="lp-btn lp-btn--hot" href={studio}>Try it free <IconArrowRight size={18} /></a>
               <a className="lp-btn lp-btn--ghost" href="#how">See how it works</a>
             </div>
             <ul className="lp-proof">
-              <li><b>6</b> free news sites</li>
-              <li><b>5</b> platforms</li>
-              <li><b>0</b> posts sent without you</li>
+              <li><b>5</b> posts</li>
+              <li><b>10</b> minutes</li>
+              <li><b>0</b> AI slop</li>
             </ul>
           </div>
           <div className="lp-hero-visual">
@@ -153,9 +151,9 @@ export default function Landing() {
 
         <section id="why" className="lp-section">
           <div className="lp-head" data-reveal>
-            <p className="lp-kicker">The real cost of content</p>
+            <p className="lp-kicker">Sound familiar?</p>
             <h2 className="lp-h2">Posting every day is a second job.</h2>
-            <p className="lp-lead">You know consistency is what grows an account. You also know what it costs you, every single day.</p>
+            <p className="lp-lead">Most people don't stop posting because they have nothing to say. They stop because every post costs an hour or two they don't have, again and again.</p>
           </div>
           <ul className="lp-pains">
             {PAINS.map(({ Icon, title, body }, i) => (
@@ -172,8 +170,8 @@ export default function Landing() {
           <div className="lp-split">
             <div data-reveal>
               <p className="lp-kicker">Growing on X</p>
-              <h2 className="lp-h2">The algorithm keeps moving. Most accounts can't keep up.</h2>
-              <p className="lp-lead">What X rewards keeps changing, and nobody sends you the memo. Topics turn over in hours, a take that's a day late barely gets seen, and posting a few times a week rarely moves the needle.</p>
+              <h2 className="lp-h2">Growing on X is harder than ever.</h2>
+              <p className="lp-lead">X keeps changing what it shows people, and nobody sends you the memo. What got you reach last month stops working this month. Topics turn over in hours, a take that's a day late barely gets seen, and posting a few times a week rarely moves the needle.</p>
               <p className="lp-lead">Yet some accounts grow so fast it looks supernatural: a sharp thread every morning, a smart take on every story within the hour, every day.</p>
             </div>
             <div className="lp-panel lp-habits" data-reveal>
@@ -198,8 +196,9 @@ export default function Landing() {
 
         <section id="human" className="lp-section">
           <div className="lp-head" data-reveal>
-            <p className="lp-kicker">AI-assisted, not AI-sounding</p>
-            <h2 className="lp-h2">Posts that don't read like a robot wrote them.</h2>
+            <p className="lp-kicker">This is not AI slop</p>
+            <h2 className="lp-h2">Not AI slop. Posts that sound like a person wrote them.</h2>
+            <p className="lp-lead">AI slop is the bland, buzzword-stuffed stuff everyone scrolls straight past. SignalForge is built to avoid it: every post starts from a real story and real facts, follows your angle, and skips the words that give AI away.</p>
           </div>
           <div className="lp-compare">
             <article className="lp-post lp-post--bad" data-reveal>
@@ -227,7 +226,7 @@ export default function Landing() {
         <section id="how" className="lp-section">
           <div className="lp-head" data-reveal>
             <p className="lp-kicker">How it works</p>
-            <h2 className="lp-h2">A week of content in one sitting.</h2>
+            <h2 className="lp-h2">5 posts in 10 minutes. Here's how.</h2>
           </div>
           <ol className="lp-steps">
             {STEPS.map(({ Icon, n, title, body }, i) => (

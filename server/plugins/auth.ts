@@ -22,7 +22,7 @@ export default createToolkitAuthPlugin({
   rootAuth: false,
   marketing: {
     appName: "SignalForge",
-    tagline: "Turn what's trending into a week of posts.",
+    tagline: "Create 5 pieces of content on social media in 10 minutes.",
     description:
       "Type your topic, see what people are talking about, and get ready-to-post content for X, LinkedIn, Instagram, email and video. You approve everything before it goes out.",
     features: [

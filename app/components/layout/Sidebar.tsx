@@ -415,7 +415,6 @@ export function Sidebar({
         )}
       >
         <HomeNavLink collapsed={collapsed} />
-        <ChatThreadsSection collapsed={collapsed} />
       </nav>
 
       <div className="mt-auto shrink-0 border-t border-sidebar-border p-2">

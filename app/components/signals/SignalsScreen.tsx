@@ -157,7 +157,6 @@ export function SignalsScreen() {
 
         {!scanning && scan && board && (
           <>
-            <FeedStrip stats={scan.feedStats} createdAt={scan.createdAt} />
 
             <div className="mt-10 flex flex-wrap items-end justify-between gap-3">
               <div className="min-w-0">
@@ -237,6 +236,7 @@ export function SignalsScreen() {
               </div>
               {showWire && (
               <>
+              <FeedStrip stats={scan.feedStats} createdAt={scan.createdAt} />
               <div className="mt-4">
                 <FilterTabs
                   label="Filter by site"
@@ -386,7 +386,11 @@ function NarrativeCard({
         </p>
       )}
 
-      <ul className="mt-4 space-y-2">
+      <details className="mt-3">
+      <summary className="cursor-pointer select-none text-[13px] text-muted-foreground transition hover:text-foreground">
+        See the {evidence.length} post{evidence.length === 1 ? "" : "s"} behind this story
+      </summary>
+      <ul className="mt-3 space-y-2">
         {evidence.slice(0, 3).map((s) => (
           <li key={s.id}>
             <a href={s.url} target="_blank" rel="noreferrer" className="group flex items-center gap-2.5 text-[13.5px] leading-snug text-foreground/75 hover:text-foreground">
@@ -399,6 +403,7 @@ function NarrativeCard({
           </li>
         ))}
       </ul>
+      </details>
 
       <div className="mt-auto pt-5">
       <div className="flex flex-wrap items-center gap-2 border-t border-border/70 pt-4">
@@ -432,7 +437,7 @@ function NarrativeCard({
             onClick={onAutopilot}
             className="sf-molten flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-[13px] font-bold text-[#1a0e05] transition hover:brightness-110"
           >
-            <IconAutopilot className="size-3.5" /> Autopilot
+            <IconAutopilot className="size-3.5" /> Autopilot · 5 posts
           </button>
         )}
         </div>

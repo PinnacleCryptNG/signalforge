@@ -121,7 +121,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
                 {n.whyNow}
               </p>
             )}
-            <Steps step={step} />
+            {!n.autopilot && <Steps step={step} />}
             <AutopilotBar
               on={!!n.autopilot}
               done={sel.drafts.length > 0}
@@ -132,6 +132,13 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
             />
           </section>
 
+          {sel.drafts.length > 0 && <DraftsPanel narrative={n} brief={sel.brief} drafts={sel.drafts} onChanged={refresh} />}
+          {sel.drafts.length > 0 && (
+            <div className="mt-16 border-t border-border/70 pt-8">
+              <p className="sf-display text-xl font-semibold">How these posts were made</p>
+              <p className="text-sm text-muted-foreground">The articles and plan behind your posts. You only need this if you want to check or change them.</p>
+            </div>
+          )}
           <SourcesPanel
             narrativeId={n.id}
             sources={sel.sources}
@@ -144,7 +151,7 @@ export function ForgeScreen({ narrativeId }: { narrativeId?: string | undefined 
 
           <BriefPanel narrativeId={n.id} brief={sel.brief} approved={approved} onAgent={agentBrief} onChanged={refresh} />
 
-          <DraftsPanel narrative={n} brief={sel.brief} drafts={sel.drafts} onChanged={refresh} />
+          {!sel.drafts.length && <DraftsPanel narrative={n} brief={sel.brief} drafts={sel.drafts} onChanged={refresh} />}
         </div>
       </div>
     </Shell>
@@ -163,7 +170,7 @@ function AutopilotBar({ on, done, pending, onStart, onRerun, onStop }: { on: boo
         <p className="text-[13px] leading-snug text-muted-foreground">
           {on
             ? done
-              ? "Scroll down to read them and approve the ones you like. Tap Run again for a fresh set."
+              ? "Read them below and approve the ones you like. Tap Run again for a fresh set."
               : "The AI is finding facts, planning the posts and writing all 5. This takes about a minute. Watch it work in the AI helper panel."
             : "The AI finds the facts, plans the posts and writes all 5 for you. You just read and approve. Prefer to check each fact yourself? Use the steps below."}
         </p>
